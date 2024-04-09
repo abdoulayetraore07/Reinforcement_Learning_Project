@@ -24,7 +24,7 @@ void alloc_mazeEnv(){
 
 void mazeEnv_make(char* file_name){
      char c;
-     char rows_s[3] ={'\0'};
+     char rows_s[3] ={'\0'}; 
      char cols_s[3] ={'\0'};
      int rows_i = 0;
      int cols_i = 0;
@@ -89,6 +89,8 @@ void mazeEnv_reset(){             /*Initialiser la cellule courante avec la cell
 int main( int argc, char* argv[] ) {
      
      mazeEnv_make(maze.txt);
+     mazeEnv_reset();
+     
      
      
      
