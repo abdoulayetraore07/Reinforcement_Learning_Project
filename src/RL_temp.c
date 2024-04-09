@@ -12,7 +12,7 @@ int state_row;
 int state_col;
 int goal_row;
 int goal_col;
-int nombre_actions = 4 ;
+int nb_actions = 4 ;
 int nblignes_Q ;
 
 
@@ -90,26 +90,36 @@ void mazeEnv_reset(){
 
 int main( int argc, char* argv[] ) {
      
-     mazeEnv_make(maze.txt);        /* Creation du labyrinthe */
+     mazeEnv_make("maze.txt");        /* Creation du labyrinthe */
      nblignes_Q = rows*cols ;
 
      Q = malloc(nblignes_Q * sizeof(double));        /* Creation du tableau Q */
      for(int i=0; i<nblignes_Q; i++) {
-         Q[i] = malloc(nombre_actions * sizeof(double));
+         Q[i] = malloc(nb_actions * sizeof(double));
      }
      
      for (int i=0; i<nblignes_Q; ++i ) {   /* Initialisation du tableau Q */
-          for ( int j=0; j<nombre_actions; ++j ) {
+          for ( int j=0; j<nb_actions; ++j ) {
               int temp = rand() % 2*nblignes_Q ;
               Q[i][j]= (double)temp - nblignes_Q ;
           }     
      }    
      
-     for (int j=0; j<nombre_actions; ++j )  {    /* Initialisation du tableau Q dans le cas terminal */
+     for (int j=0; j<nb_actions; ++j )  {    /* Initialisation du tableau Q dans le cas terminal */
           Q[start_row][j]=0;  
      }
 
-      mazeEnv_reset();               /*Initialiser la cellule courante avec la cellule de depart
+
+      /* Partie training */
+     
+     mazeEnv_reset();               /*Initialiser la cellule courante avec la cellule de depart
+
+     double Q_max= Q[state_row][0];
+     for ( int j=1; j<nb_actions; ++j ) {
+          Q_max=max(Q_max, Q[state_row][j]) ;
+     }
+
+     
 
 
 
