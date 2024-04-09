@@ -12,6 +12,8 @@ int state_row;
 int state_col;
 int goal_row;
 int goal_col;
+int nombre_actions = 4 ;
+int nblignes_Q ;
 
 
 void alloc_mazeEnv(){
@@ -80,7 +82,7 @@ void mazeEnv_make(char* file_name){
 }
 
 
-void mazeEnv_reset(){             /*Initialiser la cellule courante avec la cellule de depart
+void mazeEnv_reset(){             
      state_row = start_row;
      state_col = start_col;
      }
@@ -88,8 +90,21 @@ void mazeEnv_reset(){             /*Initialiser la cellule courante avec la cell
 
 int main( int argc, char* argv[] ) {
      
-     mazeEnv_make(maze.txt);
-     mazeEnv_reset();
+     mazeEnv_make(maze.txt);        /* Creation du labyrinthe */
+     mazeEnv_reset();               /*Initialiser la cellule courante avec la cellule de depart
+     nblignes_Q = rows*cols ;
+
+     Q = malloc(nombre_actions * sizeof(double));        /* Creation du tableau Q */
+     for(int i=0; i<nombre_actions; i++) {
+         Q[i] = malloc(nblignes_Q * sizeof(double));
+     }
+     
+     for (int i=0; i<nombre_actions; ++i ) {               /* Initialisation du tableau Q */
+          for ( int j=0; j<nblignes_Q; ++j ) {
+              double temp = random
+              Q[i][j]= 
+          }     
+     }                                           
      
      
      
