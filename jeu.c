@@ -12,4 +12,16 @@ Test BDD
   alors retourner erreur ;
 return 0;
 
+
+
+Etant donné epsilon=0;
+  Quand  q(état, . )= [1,3,2,-1];
+  alors action = haut 
+
+Etant donné epsilon=1 ;
+  ...
+
+Etant donné Q(état, . )=[0, 0, 0, 0] ;
+  ...
+  
 }
