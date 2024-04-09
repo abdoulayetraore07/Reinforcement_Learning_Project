@@ -14,6 +14,8 @@ int goal_row;
 int goal_col;
 int nb_actions = 4 ;
 int nblignes_Q ;
+double alpha=0.1;
+double gamma=0.1;
 
 
 void alloc_mazeEnv(){
@@ -114,40 +116,70 @@ void init_visited()
         }
 }
 
+
 double reward (int x1, int y1, int x2, int y2 ) {   
      int reward_max=10000;
      double norme=sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) ) 
-     double reward = (1/norme+1)*10000 + reward_max*0.25 ;   
+     double rewards = (1/norme+1)*10000 + reward_max*0.25 ;   
+     return rewards;
 }
 
 envOutput mazeEnv_step(action a){
     int reward = 0;
     int done = 0;
     envOutput stepOut;
-
+    int state_row_new=state_row;
+    int state_col_new=state_col;
+     
     if (a==up){
-       state_row = max(0,state_row -1);
+       state_row_new= max(0,state_row -1);
     }else if (a==down){
-       state_row = min(rows,state_row +1);
+       state_row_new = min(rows,state_row +1);
     }else if (a==right){
-       state_col = min(cols,state_col +1);
+       state_col_new= min(cols,state_col +1);
     }else if (a==left){
-       state_col = max(0,state_col -1);
+       state_col_new = max(0,state_col -1);
     }
-    
+
+   if ( visited[state_row_new][state_col_new]==wall ) {
+        rewards = -10000; 
+        state_row_new=state_row;
+        state_col_new=state_col;  
+   } else {
+        rewards = reward (state_row,state_col,start_row,start_col) ;
+   }
+     
     if((state_row == goal_row) && (state_col == goal_col)){
        done   = 1;
     }
 
-    if 
-
-    stepOut.reward = reward;
+    stepOut.reward = rewards_;
     stepOut.done   = done;
-    stepOut.new_col = state_col;
-    stepOut.new_row = state_row; 
+    stepOut.new_col = state_col_new;
+    stepOut.new_row = state_row_new; 
 
    return stepOut;
 }
+
+struct policy {
+     double Q_max;
+     enum action current_act;
+};
+
+
+struct policy choice_policy(state_row,state_col) {  /* Permettant de retourner Q_max et action correspondant */
+     double Q_max= Q[state_row*cols + state_col][0];
+     enum action current_act = up ;
+     for ( int j=1; j<nb_actions; ++j ) {    
+          if (Q_max < Q[state_row][j]) { 
+               Q_max= Q[state_row][j];
+               current_act = (enum action) (j) ; 
+          }        
+     }   
+     struct policy retour= {Q_max,current_act} ;
+     return retour;
+}
+
 
 int main( int argc, char* argv[] ) {
      
@@ -165,35 +197,41 @@ int main( int argc, char* argv[] ) {
               Q[i][j]= (double)temp - nblignes_Q ;
           }     
      }    
-     
+  
+     int start_row_Q= start_row*cols + start_col ;  /*  Numero cellule dans le labyrinthe */
+    
      for (int j=0; j<nb_actions; ++j )  {    /* Initialisation du tableau Q dans le cas terminal */
-          Q[start_row][j]=0;  
+          Q[start_row_Q][j]=0;  
      }
 
      init_visited()      /* Initialisation du tableau visited */
 
+          
+      /*** Partie training ***/
 
-      /* Partie training */
-     
-     mazeEnv_reset();               /*Initialiser la cellule courante avec la cellule de depart
+
+     mazeEnv_reset();               /*Initialiser la cellule courante avec la cellule de depart */
 
      while (state_row != goal_row || state_col = goal_col)  {
-     
-     double Q_max= Q[state_row][0];
-     enum action current_act = up ;
-     
-     for ( int j=1; j<nb_actions; ++j ) {    /* Choix de l'action telle que Q est maximum  */
-          if (Q_max<Q[state_row][j]) { 
-               Q_max= Q[state_row][j];
-               current_act = (enum action) (j) ; 
-          }        
-     }
 
-     envOutput stepOut=mazeEnv_step(current_act);
-     
-     
+           
+          struct policy state = choice_policy(state_row,state_col)  /* Choix de l'action telle que Q est maximum  */
+               
+          envOutput stepOut=mazeEnv_step(state.current_act) ;   /* Observation rewards and new_state */
+          
+          double rewards = stepOut.reward ;
+          int state_row_new = stepOut.new_row  ;          
+          int state_col_new = stepOut.new_col ;
 
+          struct policy state_new = choice_policy(state_row_new,state_col_new) ;  /* Choix de l'action telle que Q est maximum pour le nouvel état  */
+          double Q_max=state.Q_max ;
+          double Q_max_new=state_new.Q_max ;
+         
+          Q[state_row*cols + state_col][state.current_act] +=  alpha*( rewards + gamma*Q_max_new - Q_max ) ;
+          state_row= state_row_new ;
+          state_col= state_col_new ;
 
+          
      }
      
           
