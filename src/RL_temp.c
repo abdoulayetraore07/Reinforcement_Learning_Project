@@ -54,5 +54,26 @@ void mazeEnv_make(char* file_name){
      rows = atoi(rows_s);
      cols = atoi(cols_s);
 
+     alloc_mazeEnv();
 
+     for (int i=0; i<rows; i++){
+         for (int j=0; j < cols; j++){
+             c = getc(file);
+
+             if (c=='\n'){
+                 c = getc(file);
+             } else if (c == 's'){
+               start_row = i;
+               start_col = j;
+             } else if ( c == 'g'){
+               goal_row = i;
+               goal_col = j;
+             }
+
+             mazeEnv[i][j] = c;
+         }
+     }
+
+     fclose(file);
+}
     
