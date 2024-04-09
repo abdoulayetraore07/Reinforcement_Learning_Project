@@ -91,24 +91,25 @@ void mazeEnv_reset(){
 int main( int argc, char* argv[] ) {
      
      mazeEnv_make(maze.txt);        /* Creation du labyrinthe */
-     mazeEnv_reset();               /*Initialiser la cellule courante avec la cellule de depart
      nblignes_Q = rows*cols ;
 
-     Q = malloc(nombre_actions * sizeof(double));        /* Creation du tableau Q */
-     for(int i=0; i<nombre_actions; i++) {
-         Q[i] = malloc(nblignes_Q * sizeof(double));
+     Q = malloc(nblignes_Q * sizeof(double));        /* Creation du tableau Q */
+     for(int i=0; i<nblignes_Q; i++) {
+         Q[i] = malloc(nombre_actions * sizeof(double));
      }
      
-     for (int i=0; i<nombre_actions; ++i ) {               /* Initialisation du tableau Q */
-          for ( int j=0; j<nblignes_Q; ++j ) {
-              double temp = random
-              Q[i][j]= 
+     for (int i=0; i<nblignes_Q; ++i ) {   /* Initialisation du tableau Q */
+          for ( int j=0; j<nombre_actions; ++j ) {
+              int temp = rand() % 2*nblignes_Q ;
+              Q[i][j]= (double)temp - nblignes_Q ;
           }     
-     }                                           
+     }    
      
-     
-     
-     
+     for (int j=0; j<nombre_actions; ++j )  {    /* Initialisation du tableau Q dans le cas terminal */
+          Q[start_row][j]=0;  
+     }
+
+      mazeEnv_reset();               /*Initialiser la cellule courante avec la cellule de depart
 
 
 
