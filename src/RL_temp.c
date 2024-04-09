@@ -79,9 +79,17 @@ void mazeEnv_make(char* file_name){
      fclose(file);
 }
 
+
+void mazeEnv_reset(){             /*Initialiser la cellule courante avec la cellule de depart
+     state_row = start_row;
+     state_col = start_col;
+     }
+
+
 int main( int argc, char* argv[] ) {
      
      mazeEnv_make(maze.txt);
+     
      
      
 
