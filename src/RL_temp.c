@@ -1,5 +1,6 @@
 #include "mazeEnv.h"
 #include "functions.h"
+#include "math.h"
 
 char** mazeEnv;
 int** visited;
@@ -11,6 +12,7 @@ int state_row;
 int state_col;
 int goal_row;
 int goal_col;
+
 
 void alloc_mazeEnv(){
      mazeEnv = malloc(rows * sizeof(char*));
@@ -78,6 +80,9 @@ void mazeEnv_make(char* file_name){
 }
 
 int main( int argc, char* argv[] ) {
+     
+     mazeEnv_make(maze.txt);
+     
      
 
 
