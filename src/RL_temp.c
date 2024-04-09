@@ -76,4 +76,32 @@ void mazeEnv_make(char* file_name){
 
      fclose(file);
 }
+
+int main( int argc, char* argv[] ) {
+     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     
+}
     
