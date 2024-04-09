@@ -12,6 +12,13 @@ int state_col;
 int goal_row;
 int goal_col;
 
+void alloc_mazeEnv(){
+     mazeEnv = malloc(rows * sizeof(char*));
+
+     for(int i=0; i<rows; i++) {
+         mazeEnv[i] = malloc(cols * sizeof(char*));
+     }
+}
 
 void mazeEnv_make(char* file_name){
      char c;
@@ -47,4 +54,5 @@ void mazeEnv_make(char* file_name){
      rows = atoi(rows_s);
      cols = atoi(cols_s);
 
-     alloc_mazeEnv();
+
+    
