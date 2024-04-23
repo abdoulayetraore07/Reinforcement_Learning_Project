@@ -199,9 +199,10 @@ int main( int argc, char* argv[] ) {
      }    
   
      int start_row_Q= start_row*cols + start_col ;  /*  Numero cellule dans le labyrinthe */
+     int goal_row_Q= goal_row*cols + goal_col ;  /*  Numero cellule du goal dans le labyrinthe */
     
      for (int j=0; j<nb_actions; ++j )  {    /* Initialisation du tableau Q dans le cas terminal */
-          Q[start_row_Q][j]=0;  
+          Q[goal_row_Q][j]=0;  
      }
 
      init_visited()      /* Initialisation du tableau visited */
