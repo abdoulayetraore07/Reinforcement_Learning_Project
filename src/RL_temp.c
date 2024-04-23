@@ -19,7 +19,6 @@ int nblignes_Q ;
 double alpha=0.1;
 double gamma_perso=0.1;
 int** Q;
-int nb_iterations_max = 100 ;
 double epsilon=0.1;
 
 
@@ -166,9 +165,11 @@ envOutput mazeEnv_step(action a){
    if ( visited[state_row_new][state_col_new]==wall ) {
         rewards = -1000000; 
         state_row_new=state_row;
-        state_col_new=state_col;  
+        state_col_new=state_col; 
+        printf("Mur\n");
    } else {
         rewards = rewarder (state_row_new,state_col_new,goal_row,goal_col) ;
+        printf("Non Mur\n");
    }
      
     if((state_row == goal_row) && (state_col == goal_col)){
@@ -199,7 +200,8 @@ struct policy choice_policy(int state_row,int state_col) {  /* Permettant de ret
           }        
      }   
      int alea_1=rand() % 100 ;
-     if (alea_1<(100*epsilon)) {
+     int borne= 100*epsilon ;
+     if (alea_1<borne) {
           int alea_2= rand()%3 ;
           current_act= (enum action) (alea_2) ;
           Q_max= Q[state_row*cols + state_col][current_act]; 
@@ -255,10 +257,9 @@ int main( int argc, char* argv[] ) {
 
      mazeEnv_reset();               /*Initialiser la cellule courante avec la cellule de depart */
 
-     /* int nb_iterations=0; */
-
-     while (( state_row != goal_row || state_col != goal_col) /* && nb_iterations<nb_iterations_max */ ) {
-
+    
+     while (( state_row != goal_row || state_col != goal_col) ) {
+          printf("______________________________________________");
           mazeEnv_render_pos()  ;   /*Affichage de l'etat actuel */
 
           struct policy state = choice_policy(state_row,state_col) ; /* Choix de l'action telle que Q est maximum  */
@@ -275,7 +276,6 @@ int main( int argc, char* argv[] ) {
           Q[state_row*cols + state_col][state.current_act] +=  alpha*( rewards + gamma_perso*Q_max_new - Q_max ) ;
           state_row= state_row_new ;
           state_col= state_col_new ;
-          /* ++nb_iterations ; */
        
      }
 
