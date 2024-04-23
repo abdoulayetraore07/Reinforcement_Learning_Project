@@ -191,8 +191,8 @@ struct policy choice_policy(int state_row,int state_col) {  /* Permettant de ret
      double Q_max= Q[state_row*cols + state_col][0];
      enum action current_act = up ;
      for ( int j=1; j<nb_actions; ++j ) {    
-          if (Q_max < Q[state_row][j]) { 
-               Q_max= Q[state_row][j];
+          if (Q_max < Q[state_row*cols + state_col][j]) { 
+               Q_max= Q[state_row*cols + state_col][j];
                current_act = (enum action) (j) ; 
           }        
      }   
