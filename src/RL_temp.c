@@ -240,7 +240,6 @@ int main( int argc, char* argv[] ) {
      }
 
      init_visited() ;    /* Initialisation du tableau visited */
-
           
       /*** Partie training ***/
 
@@ -270,8 +269,9 @@ int main( int argc, char* argv[] ) {
           ++nb_iterations ;
        
      }
-     return 0;
 
+     return 0;
+     
      
 }
     
