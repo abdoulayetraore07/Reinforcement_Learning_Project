@@ -260,7 +260,7 @@ int main( int argc, char* argv[] ) {
           int state_row_new = stepOut.new_row  ;          
           int state_col_new = stepOut.new_col ;
 
-          struct policy state_new = choice_policy(state_row_new,state_col_new) ;  /* Choix de l'action telle que Q est maximum pour le nouvel état  */
+          struct policy state_new = choice_policy(state_row_new,state_col_new);  /* Choix de l'action telle que Q est maximum pour le nouvel état  */
           double Q_max=state.Q_max ;
           double Q_max_new=state_new.Q_max ;
          
