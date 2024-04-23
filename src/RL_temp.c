@@ -1,6 +1,8 @@
 #include "mazeEnv.h"
 #include "functions.h"
 #include <math.h>
+#include <stdlib.h>
+#include <time.h>
 
 char** mazeEnv;
 int** visited;
@@ -15,7 +17,9 @@ int goal_col;
 int nb_actions = 4 ;
 int nblignes_Q ;
 double alpha=0.1;
-double gamma=0.1;
+double gamma_perso=0.1;
+int** Q;
+int nb_iterations_max = 100 ;
 
 
 void alloc_mazeEnv(){
@@ -117,15 +121,31 @@ void init_visited()
 }
 
 
-double reward (int x1, int y1, int x2, int y2 ) {   
+double rewarder (int x1, int y1, int x2, int y2 ) {   
      int reward_max=10000;
-     double norme=sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) ) 
+     double norme=sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) ) ;
      double rewards = (1/norme+1)*10000 + reward_max*0.25 ;   
      return rewards;
 }
 
+int min (int a, int b) {
+     if (a>b) {
+          return b;
+     } else {
+          return a;
+     }
+}
+
+int max (int a, int b) {
+     if (a>b) {
+          return a;
+     } else {
+          return b;
+     }
+}
+
 envOutput mazeEnv_step(action a){
-    int reward = 0;
+    int rewards = 0;
     int done = 0;
     envOutput stepOut;
     int state_row_new=state_row;
@@ -146,14 +166,14 @@ envOutput mazeEnv_step(action a){
         state_row_new=state_row;
         state_col_new=state_col;  
    } else {
-        rewards = reward (state_row,state_col,start_row,start_col) ;
+        rewards = rewarder (state_row,state_col,start_row,start_col) ;
    }
      
     if((state_row == goal_row) && (state_col == goal_col)){
        done   = 1;
     }
 
-    stepOut.reward = rewards_;
+    stepOut.reward = rewards ;
     stepOut.done   = done;
     stepOut.new_col = state_col_new;
     stepOut.new_row = state_row_new; 
@@ -167,7 +187,7 @@ struct policy {
 };
 
 
-struct policy choice_policy(state_row,state_col) {  /* Permettant de retourner Q_max et action correspondant */
+struct policy choice_policy(int state_row,int state_col) {  /* Permettant de retourner Q_max et action correspondant */
      double Q_max= Q[state_row*cols + state_col][0];
      enum action current_act = up ;
      for ( int j=1; j<nb_actions; ++j ) {    
@@ -181,8 +201,22 @@ struct policy choice_policy(state_row,state_col) {  /* Permettant de retourner Q
 }
 
 
+void mazeEnv_render_pos(){
+     mazeEnv[state_row][state_col] = 'o';
+     for (int i=0; i<rows; i++) {
+         for (int j=0; j< cols; j++){
+             printf("%c ", mazeEnv[i][j]);
+         }
+         printf("\n");
+     }
+     printf("\n");
+}
+
+
 int main( int argc, char* argv[] ) {
      
+     srand( time( NULL ) );
+
      mazeEnv_make("maze.txt");        /* Creation du labyrinthe */
      nblignes_Q = rows*cols ;
 
@@ -193,19 +227,19 @@ int main( int argc, char* argv[] ) {
      
      for (int i=0; i<nblignes_Q; ++i ) {   /* Initialisation du tableau Q */
           for ( int j=0; j<nb_actions; ++j ) {
-              int temp = rand() % 2*nblignes_Q ;
-              Q[i][j]= (double)temp - nblignes_Q ;
+              int temp = rand() % (2*nblignes_Q) ;
+              Q[i][j]= temp-nblignes_Q ;
           }     
      }    
   
-     int start_row_Q= start_row*cols + start_col ;  /*  Numero cellule dans le labyrinthe */
+     int start_row_Q= start_row*cols + start_col ;  /*  Numero cellule du start dans le labyrinthe */
      int goal_row_Q= goal_row*cols + goal_col ;  /*  Numero cellule du goal dans le labyrinthe */
     
      for (int j=0; j<nb_actions; ++j )  {    /* Initialisation du tableau Q dans le cas terminal */
           Q[goal_row_Q][j]=0;  
      }
 
-     init_visited()      /* Initialisation du tableau visited */
+     init_visited() ;    /* Initialisation du tableau visited */
 
           
       /*** Partie training ***/
@@ -213,11 +247,13 @@ int main( int argc, char* argv[] ) {
 
      mazeEnv_reset();               /*Initialiser la cellule courante avec la cellule de depart */
 
-     while (state_row != goal_row || state_col = goal_col)  {
+     int nb_iterations=0; 
 
-           
-          struct policy state = choice_policy(state_row,state_col)  /* Choix de l'action telle que Q est maximum  */
-               
+     while (( state_row != goal_row || state_col != goal_col) && nb_iterations<nb_iterations_max ) {
+
+          mazeEnv_render_pos()  ;   /*Affichage de l'etat actuel */
+
+          struct policy state = choice_policy(state_row,state_col) ; /* Choix de l'action telle que Q est maximum  */
           envOutput stepOut=mazeEnv_step(state.current_act) ;   /* Observation rewards and new_state */
           
           double rewards = stepOut.reward ;
@@ -228,40 +264,13 @@ int main( int argc, char* argv[] ) {
           double Q_max=state.Q_max ;
           double Q_max_new=state_new.Q_max ;
          
-          Q[state_row*cols + state_col][state.current_act] +=  alpha*( rewards + gamma*Q_max_new - Q_max ) ;
+          Q[state_row*cols + state_col][state.current_act] +=  alpha*( rewards + gamma_perso*Q_max_new - Q_max ) ;
           state_row= state_row_new ;
           state_col= state_col_new ;
-
-          
+          ++nb_iterations ;
+       
      }
-     
-          
-
-     
-
-     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+     return 0;
 
      
 }
