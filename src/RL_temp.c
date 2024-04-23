@@ -1,4 +1,4 @@
-w#include "mazeEnv.h"
+#include "mazeEnv.h"
 #include "functions.h"
 #include <math.h>
 #include <stdlib.h>
