@@ -19,7 +19,7 @@ int nblignes_Q ;
 double alpha=0.1;
 double gamma_perso=0.1;
 int** Q;
-double epsilon=0.1;
+double epsilon=0.2;
 
 
 
