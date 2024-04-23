@@ -1,4 +1,4 @@
-#include "mazeEnv.h"
+w#include "mazeEnv.h"
 #include "functions.h"
 #include <math.h>
 #include <stdlib.h>
@@ -166,7 +166,7 @@ envOutput mazeEnv_step(action a){
         state_row_new=state_row;
         state_col_new=state_col;  
    } else {
-        rewards = rewarder (state_row,state_col,start_row,start_col) ;
+        rewards = rewarder (state_row_new,state_col_new,goal_row,goal_col) ;
    }
      
     if((state_row == goal_row) && (state_col == goal_col)){
