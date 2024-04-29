@@ -218,16 +218,17 @@ struct policy choice_policy_bolt(int state_row,int state_col) { /* Fonction choi
      for (int j=0; j< nb_actions ; ++j ) {
           somme_expo+= exp(Q[state_row*cols + state_col][j]);
      }
-     double proba_up = exp(Q[state_row*cols + state_col][0]) / somme_expo ;       // Probabilité de choisir action up ;
-     double proba_down = exp(Q[state_row*cols + state_col][1]) / somme_expo ;     // Probabilité de choisir action down ;
-     double proba_left = exp(Q[state_row*cols + state_col][2]) / somme_expo ;     // Probabilité de choisir action left ;
-     double proba_right = exp(Q[state_row*cols + state_col][3]) / somme_expo ;    // Probabilité de choisir action right ;
+     double proba_up = exp(Q[state_row*cols + state_col][0]) / somme_expo ;       /* Probabilité de choisir action up */
+     double proba_down = exp(Q[state_row*cols + state_col][1]) / somme_expo ;     /* Probabilité de choisir action down */
+     double proba_left = exp(Q[state_row*cols + state_col][2]) / somme_expo ;     /* Probabilité de choisir action left */
+     double proba_right = exp(Q[state_row*cols + state_col][3]) / somme_expo ;    /* Probabilité de choisir action right */
 
-     int alea=rand() % 100 ;
+     int alea=rand() % 100 ;                                                      /* Choix d'un nombre aléatoire entre 0 et 99 */
+     enum action current_act = 0 ;                     
      double Q_act = 0;
-     enum action current_act = 0 ;
+     
 
-     if ( alea < proba_up*100 ) {
+     if ( alea < proba_up*100 ) {                                                 /* Choix de l'action et Q correspondant en fonction de la probabilité */
           current_act = up ;
           Q_act= Q[state_row*cols + state_col][current_act]; 
      } else {
@@ -309,7 +310,7 @@ int main( int argc, char* argv[] ) {
           printf("-----------------------------------------------\n\n\n");
           mazeEnv_render_pos()  ;   /*Affichage de l'etat actuel */
 
-          struct policy state = choice_policy_bolt(state_row,state_col) ; /* Choix de l'action en fonction de la police et de Q pour l'état courant */
+          struct policy state = choice_policy_eps(state_row,state_col) ; /* Choix de l'action en fonction de la police et de Q pour l'état courant */
           envOutput stepOut=mazeEnv_step(state.current_act) ;   /* Observation rewards and new_state */
           
           double rewards = stepOut.reward ;                     /* Récuperation de la récompense */
@@ -317,7 +318,7 @@ int main( int argc, char* argv[] ) {
           int state_col_new = stepOut.new_col ;
           double Q_max=state.Q_max ;                            /* Récuperation de la valeur de Q pour l'action choisie précedemment pour l'état courant */
 
-          struct policy state_new = choice_policy_bolt(state_row_new,state_col_new);  /* Choix de l'action en fonction de la police et de Q pour le nouvel état  */
+          struct policy state_new = choice_policy_eps(state_row_new,state_col_new);  /* Choix de l'action en fonction de la police et de Q pour le nouvel état  */
           
           double Q_max_new=state_new.Q_max ;                    /* Récuperation de la valeur de Q pour l'action choisie précedemment pour le nouvel état */
          
