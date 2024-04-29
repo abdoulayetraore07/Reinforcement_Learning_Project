@@ -266,6 +266,9 @@ void mazeEnv_render_pos(){                                      /* Fonction d'af
 
 
 int main( int argc, char* argv[] ) {
+
+     /* Pour le choix de la police epsilon_greedy : le nom de la fonction à la ligne 316 doit être : choice_policy_eps  */
+     /* Pour le choix de la police Boltzman : le nom de la fonction à la ligne 316 doit être : choice_policy_bolt  */
      
      srand( time( NULL ) );                                     
 
@@ -310,6 +313,9 @@ int main( int argc, char* argv[] ) {
           printf("-----------------------------------------------\n\n\n");
           mazeEnv_render_pos()  ;   /*Affichage de l'etat actuel */
 
+          /* Pour le choix de la police epsilon_greedy : le nom de la fonction à la ligne 316 doit être : choice_policy_eps  */
+          /* Pour le choix de la police Boltzman : le nom de la fonction à la ligne 316 doit être : choice_policy_bolt  */
+          
           struct policy state = choice_policy_eps(state_row,state_col) ; /* Choix de l'action en fonction de la police et de Q pour l'état courant */
           envOutput stepOut=mazeEnv_step(state.current_act) ;   /* Observation rewards and new_state */
           
