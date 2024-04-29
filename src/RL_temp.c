@@ -20,7 +20,7 @@ double alpha=0.1;
 double gamma_perso=0.1;
 int** Q;
 double epsilon=0.2;
-
+char police ;
 
 
 void alloc_mazeEnv(){
@@ -206,28 +206,45 @@ struct policy choice_policy_eps(int state_row,int state_col) {  /* Permettant de
           current_act= (enum action) (alea_2) ;
           Q_max= Q[state_row*cols + state_col][current_act]; 
      }
+     
      struct policy retour= {Q_max,current_act} ;
      return retour;
 
 }
 
 struct policy choice_policy_bolt(int state_row,int state_col) {  /* Permettant de retourner Q_max et action correspondant */
-     double Q_max= Q[state_row*cols + state_col][0];
-     enum action current_act = up ;
-     for ( int j=1; j<nb_actions; ++j ) {    
-          if (Q_max < Q[state_row*cols + state_col][j]) { 
-               Q_max= Q[state_row*cols + state_col][j];
-               current_act = (enum action) (j) ; 
-          }        
-     }   
-     int alea_1=rand() % 100 ;
-     int borne= 100*epsilon ;
-     if (alea_1<borne) {
-          int alea_2= rand()%3 ;
-          current_act= (enum action) (alea_2) ;
-          Q_max= Q[state_row*cols + state_col][current_act]; 
+     
+     double somme_expo = 0;
+     for (int j=0; j< nb_actions ; ++j ) {
+          somme_expo+= exp(Q[state_row*cols + state_col][j]);
      }
-     struct policy retour= {Q_max,current_act} ;
+     double proba_up = exp(Q[state_row*cols + state_col][0]) / somme_expo ;
+     double proba_down = exp(Q[state_row*cols + state_col][1]) / somme_expo ;
+     double proba_left = exp(Q[state_row*cols + state_col][2]) / somme_expo ;
+     double proba_right = exp(Q[state_row*cols + state_col][3]) / somme_expo ;
+
+     int alea=rand() % 100 ;
+     double Q_act = 0;
+     enum action current_act = 0 ;
+
+     if ( alea < proba_up*100 ) {
+          current_act = up ;
+          Q_act= Q[state_row*cols + state_col][current_act]; 
+     } else {
+          if ( alea < ( proba_up + proba_down ) *100 ) { 
+               current_act = down ;
+               Q_act= Q[state_row*cols + state_col][current_act]; 
+          } else {
+               if ( alea < ( proba_up + proba_down + proba_left ) *100 ) {
+                    current_act = left ;
+                    Q_act= Q[state_row*cols + state_col][current_act] ; 
+
+               } else {
+                    current_act = right ;
+                    Q_act= Q[state_row*cols + state_col][current_act] ;    
+               }
+               
+     struct policy retour= {Q_act,current_act} ;
      return retour;
 
 }
@@ -278,19 +295,30 @@ int main( int argc, char* argv[] ) {
 
      mazeEnv_reset();               /*Initialiser la cellule courante avec la cellule de depart */
 
-    
+     int choix_police = 0 ;    // Choix de la police pour l'exploration entre epsilon_greedy et Boltzman ;
+     do { 
+          printf("Entrez le chiffre 1 pour la police epsilon_greedy ou 2 pour l'exploration de Boltzman");
+          scanf("%d",&choix_police);
+     } while ( choix_police != 1 && choix_police != 2 ) ;
+
+     if ( choix_police == 1 ) {
+          police = "eps" ;
+     } else { 
+           police = "bolt" ;
+     }
+          
      while (( state_row != goal_row || state_col != goal_col) ) {
           printf("______________________________________________");
           mazeEnv_render_pos()  ;   /*Affichage de l'etat actuel */
 
-          struct policy state = choice_policy(state_row,state_col) ; /* Choix de l'action telle que Q est maximum  */
+          struct policy state = choice_policy_police(state_row,state_col) ; /* Choix de l'action telle que Q est maximum  */
           envOutput stepOut=mazeEnv_step(state.current_act) ;   /* Observation rewards and new_state */
           
           double rewards = stepOut.reward ;
           int state_row_new = stepOut.new_row  ;          
           int state_col_new = stepOut.new_col ;
 
-          struct policy state_new = choice_policy(state_row_new,state_col_new);  /* Choix de l'action telle que Q est maximum pour le nouvel état  */
+          struct policy state_new = choice_policy_police(state_row_new,state_col_new);  /* Choix de l'action telle que Q est maximum pour le nouvel état  */
           double Q_max=state.Q_max ;
           double Q_max_new=state_new.Q_max ;
          
