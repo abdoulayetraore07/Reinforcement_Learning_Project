@@ -10,3 +10,5 @@ src/functions.o : src/functions.c include/functions.h
 src/mazeEnv.o   : src/mazeEnv.c include/mazeEnv.h
 	gcc -I include/ -g -o src/mazeEnv.o -c src/mazeEnv.c -Wall
 
+src/RL_temp.o	: src/RL_temp.c include/mazeEnv.h include/functions.h include/mazeEnv.h
+	gcc -I include/ -g -o src/RL_temp.o -c src/RL_temp.c -Wall
