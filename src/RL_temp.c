@@ -190,7 +190,28 @@ struct policy {
 };
 
 
-struct policy choice_policy(int state_row,int state_col) {  /* Permettant de retourner Q_max et action correspondant */
+struct policy choice_policy_eps(int state_row,int state_col) {  /* Permettant de retourner Q_max et action correspondant */
+     double Q_max= Q[state_row*cols + state_col][0];
+     enum action current_act = up ;
+     for ( int j=1; j<nb_actions; ++j ) {    
+          if (Q_max < Q[state_row*cols + state_col][j]) { 
+               Q_max= Q[state_row*cols + state_col][j];
+               current_act = (enum action) (j) ; 
+          }        
+     }   
+     int alea_1=rand() % 100 ;
+     int borne= 100*epsilon ;
+     if (alea_1<borne) {
+          int alea_2= rand()%3 ;
+          current_act= (enum action) (alea_2) ;
+          Q_max= Q[state_row*cols + state_col][current_act]; 
+     }
+     struct policy retour= {Q_max,current_act} ;
+     return retour;
+
+}
+
+struct policy choice_policy_bolt(int state_row,int state_col) {  /* Permettant de retourner Q_max et action correspondant */
      double Q_max= Q[state_row*cols + state_col][0];
      enum action current_act = up ;
      for ( int j=1; j<nb_actions; ++j ) {    
