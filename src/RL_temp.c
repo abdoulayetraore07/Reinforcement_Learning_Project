@@ -4,7 +4,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
-
+// 
 char** mazeEnv;
 int** visited;
 int rows;
