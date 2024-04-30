@@ -266,14 +266,12 @@ void mazeEnv_render_pos(){                                      /* Fonction d'af
 
 
 int main( int argc, char* argv[] ) {
-
-     /* Pour le choix de la police epsilon_greedy : le nom de la fonction à la ligne 316 doit être : choice_policy_eps  */
-     /* Pour le choix de la police Boltzman : le nom de la fonction à la ligne 316 doit être : choice_policy_bolt  */
      
      srand( time( NULL ) );                                     
 
      mazeEnv_make("maze.txt");                                  /* Creation du labyrinthe */
      nblignes_Q = rows*cols ;
+     int limit_Q= 100 ;
 
      Q = malloc(nblignes_Q * sizeof(double));                   /* Creation du tableau Q */
      for(int i=0; i<nblignes_Q; i++) {
@@ -282,8 +280,8 @@ int main( int argc, char* argv[] ) {
      
      for (int i=0; i<nblignes_Q; ++i ) {                        /* Initialisation du tableau Q */
           for ( int j=0; j<nb_actions; ++j ) {
-              int temp = rand() % (2*nblignes_Q) ;              /* Nombre aléatoire pour remplir Q */
-              Q[i][j]= temp-nblignes_Q ;
+              int temp = rand() % (2*limit_Q) ;              /* Nombre aléatoire pour remplir Q */
+              Q[i][j]= temp-limit_Q ;
           }     
      }    
   
@@ -308,14 +306,12 @@ int main( int argc, char* argv[] ) {
     double elapsed; 
   
     start = clock();                                            /* Lancement de la mesure pour connaître le délai d'éxecution de la boucle */
-
+    printf("Le temps de départ est : %3.f\n ", start ) ;
+    
      while ( done != 1 ) {
-          printf("-----------------------------------------------\n\n\n");
-          mazeEnv_render_pos()  ;   /*Affichage de l'etat actuel */
+          printf("-----------------------------------------------\n\n\n");  
+          mazeEnv_render_pos()  ;                               /* Affichage de l'etat actuel            */  
 
-          /* Pour le choix de la police epsilon_greedy : le nom de la fonction à la ligne 316 doit être : choice_policy_eps  */
-          /* Pour le choix de la police Boltzman : le nom de la fonction à la ligne 316 doit être : choice_policy_bolt  */
-          
           struct policy state = choice_policy_eps(state_row,state_col) ; /* Choix de l'action en fonction de la police et de Q pour l'état courant */
           envOutput stepOut=mazeEnv_step(state.current_act) ;   /* Observation rewards and new_state */
           
@@ -335,9 +331,9 @@ int main( int argc, char* argv[] ) {
      }
 
      end = clock();                                    /* Arrêt de la mesure     */ 
-     elapsed = ((double)end - start) / CLOCKS_PER_SEC; /* Conversion en secondes  */      
+     elapsed = ((double)end - start) / CLOCKS_PER_SEC; /* Conversion en secondes  */  
 
-     printf("Bravo, vous avez atteint la sortie en : %.2f secondes. \n\n", elapsed ) ;
+     printf("Bravo, vous avez atteint la sortie en : %3.f secondes. \n\n", elapsed ) ;
 
      
 }
