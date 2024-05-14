@@ -18,11 +18,14 @@ int goal_col;
 int nb_actions = 4 ;
 int nblignes_Q ;
 double alpha=0.1;
-double gamma_perso=0.1;
+double gamma_perso = 0.1;
 double** Q;
-double epsilon=0.2;
+double epsilon = 0.2;
 char police ;
 int done = 0 ;
+int nb_max_moves = 1000 ;
+int nb_training = 100 ;
+
 
 
 void alloc_mazeEnv(){                                           /* Creation du labyrinthe */
@@ -270,6 +273,7 @@ int main( int argc, char* argv[] ) {
 
      mazeEnv_make("maze.txt");                                  /* Creation du labyrinthe */
      nblignes_Q = rows*cols ;
+  
      int limit_Q= 2 ;                                          /* Limite des valeurs de Q */
 
      Q = malloc(nblignes_Q * sizeof(double));                   /* Creation du tableau Q */
@@ -297,12 +301,10 @@ int main( int argc, char* argv[] ) {
 
 
 
-      /*** Partie training ***/
+      /*** PARTIE TRAINING ***/
 
 
-     mazeEnv_reset();                                           /* Initialiser la cellule courante avec la cellule de depart */
-
-     int reponse = 0;   
+     int reponse = 0;                                            /* Choix de la police à utiliser entre epsilon_greedy et Boltzman */
      do {      
           printf("Tapez le chiffre 1 pour la police epsilon_greedy ou 2 pour l'exploration de Boltzman\n ") ;
           scanf("%d",&reponse) ;
@@ -314,28 +316,66 @@ int main( int argc, char* argv[] ) {
      start = clock();                                            /* Lancement de la mesure pour connaître le délai d'éxecution de la boucle */
      printf("Le temps de départ est : %.2f\n ", start ) ;
 
+     int nb_moves ;                                       /* Nombre maximal de pas à faire lors d'une épisode pour optimiser le temps d'execution */
+  
      if (reponse == 1 ) {
-
-          while ( done != 1 ) {
-               printf("-----------------------------------------------\n\n\n");  
-               mazeEnv_render_pos()  ;                               /* Affichage de l'etat actuel */  
-
-               struct policy state = choice_policy_eps(state_row,state_col) ; /* Choix de l'action en fonction de la police et de Q pour l'état courant */
-               envOutput stepOut=mazeEnv_step(state.current_act) ;   /* Observation rewards and new_state */
           
-               double rewards = stepOut.reward ;                     /* Récuperation de la récompense */
-               int state_row_new = stepOut.new_row  ;                /* Récuperation du nouvel_état */
-               int state_col_new = stepOut.new_col ;
-               double Q_max=state.Q_max ;                            /* Récuperation de la valeur de Q pour l'action choisie précedemment pour l'état courant */
-
-               struct policy state_new = choice_policy_eps(state_row_new,state_col_new);  /* Choix de l'action en fonction de la police et de Q pour le nouvel état  */
+          for ( int j=0; j< nb_training ; j++ ) { 
+              mazeEnv_reset();                                           /* Initialiser la cellule courante avec la cellule de depart */
+              nb_moves = 0 ;
+              
+              while ( done != 1 && nb_moves < nb_max_moves) {
+                 
           
-               double Q_max_new=state_new.Q_max ;                    /* Récuperation de la valeur de Q pour l'action choisie précedemment pour le nouvel état */
+                 struct policy state = choice_policy_eps(state_row,state_col) ; /* Choix de l'action en fonction de la police et de Q pour l'état courant */
+                 envOutput stepOut=mazeEnv_step(state.current_act) ;   /* Observation rewards and new_state */
+          
+                 double rewards = stepOut.reward ;                     /* Récuperation de la récompense */
+                 int state_row_new = stepOut.new_row  ;                /* Récuperation du nouvel_état */
+                 int state_col_new = stepOut.new_col ;
+                 double Q_max=state.Q_max ;                            /* Récuperation de la valeur de Q pour l'action choisie précedemment pour l'état courant */
+
+                 struct policy state_new = choice_policy_eps(state_row_new,state_col_new);  /* Choix de l'action en fonction de la police et de Q pour le nouvel état  */
+          
+                 double Q_max_new=state_new.Q_max ;                    /* Récuperation de la valeur de Q pour l'action choisie précedemment pour le nouvel état */
          
-               Q[state_row*cols + state_col][state.current_act] +=  alpha*( rewards + gamma_perso*Q_max_new - Q_max ) ;  /* Modification de la valeur de Q */
-               state_row= state_row_new ;
-               state_col= state_col_new ; 
-     }
+                 Q[state_row*cols + state_col][state.current_act] +=  alpha*( rewards + gamma_perso*Q_max_new - Q_max ) ;  /* Modification de la valeur de Q */
+                 state_row= state_row_new ;
+                 state_col= state_col_new ; 
+                 ++nb_moves ;
+             }
+             printf("Épisode %d/%d terminée \n\n\n",j, nb_training );  
+             
+          }
+
+          /* DERNIER PARCOURS POUR AFFICHER LE CHEMIN OPTIMAL */
+          mazeEnv_reset();
+          while ( done != 1 ) {
+            
+                 mazeEnv[state_row][state_col] = 'o';                  /* Marquage de l'état actuel */
+            
+                 struct policy state = choice_policy_eps(state_row,state_col) ; /* Choix de l'action en fonction de la police et de Q pour l'état courant */
+                 envOutput stepOut=mazeEnv_step(state.current_act) ;   /* Observation rewards and new_state */
+          
+                 double rewards = stepOut.reward ;                     /* Récuperation de la récompense */
+                 int state_row_new = stepOut.new_row  ;                /* Récuperation du nouvel_état */
+                 int state_col_new = stepOut.new_col ;
+                 double Q_max=state.Q_max ;                            /* Récuperation de la valeur de Q pour l'action choisie précedemment pour l'état courant */
+
+                 struct policy state_new = choice_policy_eps(state_row_new,state_col_new);  /* Choix de l'action en fonction de la police et de Q pour le nouvel état  */
+          
+                 double Q_max_new=state_new.Q_max ;                    /* Récuperation de la valeur de Q pour l'action choisie précedemment pour le nouvel état */
+         
+                 Q[state_row*cols + state_col][state.current_act] +=  alpha*( rewards + gamma_perso*Q_max_new - Q_max ) ;  /* Modification de la valeur de Q */
+                 state_row= state_row_new ;
+                 state_col= state_col_new ; 
+             }
+             mazeEnv_reset();
+             mazeEnv[state_row][state_col] = 's';
+             mazeEnv[goal_row][goal_col] = 'g'; 
+             mazeEnv_render_pos()  ;                               /* Affichage du chemin optimal */  
+
+           
 
      }
      else {
