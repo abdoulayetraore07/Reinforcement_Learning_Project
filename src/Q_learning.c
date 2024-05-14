@@ -167,31 +167,31 @@ envOutput mazeEnv_step(action a, int reponse){                               /* 
    if ( reponse==1 )  {
 
           if ( visited[state_row_new][state_col_new]==wall ) {
-               rewards = -1000 ; 
+               rewards = -100 ; 
                state_row_new=state_row;
                state_col_new=state_col; 
           } else {
-               rewards = -1 ;
+               rewards = -5 ;
           }
      
           if((state_row == goal_row) && (state_col == goal_col)){
                done   = 1 ;
-               rewards = 1000 ; 
+               rewards = 100 ; 
           }
 
    } else {
 
           if ( visited[state_row_new][state_col_new]==wall ) {
-               rewards = -1000000; 
+               rewards = -135; 
                state_row_new=state_row;
                state_col_new=state_col; 
           } else {
-               rewards = -1 ; // rewarder (state_row_new,state_col_new,goal_row,goal_col) ;
+               rewards = -0.3 ; // rewarder (state_row_new,state_col_new,goal_row,goal_col) ;
           }
      
           if((state_row == goal_row) && (state_col == goal_col)){
                done   = 1;
-               rewards = 1000;
+               rewards = 5 ;
           }
 
    }
