@@ -123,7 +123,7 @@ void init_visited()                                             /* Fonction d'in
 }
 
 double rewarder (int x1, int y1, int x2, int y2 ) {             /* Fonction de récompense en fonction de la distance eucludienne */
-     int reward_max=0.1;
+     double reward_max=0.1;
      double norme=sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) ) ;
      double rewards = (1/norme+1 + 0.25 )*reward_max ;   
      return rewards;
@@ -309,6 +309,10 @@ int main( int argc, char* argv[] ) {
           printf("Tapez le chiffre 1 pour la police epsilon_greedy ou 2 pour l'exploration de Boltzman\n ") ;
           scanf("%d",&reponse) ;
      } while ( reponse != 1 && reponse != 2) ;
+     
+
+     clock_t start, end;                                         /* Variables pour mesurer le temps d'éxécution de la boucle */                      
+     double elapsed; 
 
 
      if (reponse == 1 ) {                                       //CAS = Espilon greedy ;
@@ -324,7 +328,7 @@ int main( int argc, char* argv[] ) {
           double elapsed; 
   
           start = clock();                                           
-          printf("Le temps de départ est : %.2f\n ", start ) ;
+          printf("Le temps de départ est : %.2lu\n ", start ) ;
 
           while ( done != 1 ) {
                printf("-----------------------------------------------\n\n\n");  
@@ -356,13 +360,9 @@ int main( int argc, char* argv[] ) {
           struct policy state = choice_policy_bolt(state_row,state_col) ; /* Choix de l'action en fonction de la police et de Q pour l'état courant */
           action current_act = state.current_act ;
 
-
-
-          clock_t start, end;                                        /* Lancement de la mesure pour connaître le délai d'éxecution de la boucle */
-          double elapsed; 
   
           start = clock();                                           
-          printf("Le temps de départ est : %.2f\n ", start ) ;
+          printf("Le temps de départ est : %.2lu\n ", start ) ;             /* Lancement de la mesure pour connaître le délai d'éxecution de la boucle */
 
 
           while ( done != 1 ) {
@@ -389,9 +389,9 @@ int main( int argc, char* argv[] ) {
      }
 
      end = clock();                                    /* Arrêt de la mesure     */ 
-     elapsed = ((double)end - start) / CLOCKS_PER_SEC; /* Conversion en secondes  */  
+     elapsed = (end - start) / CLOCKS_PER_SEC; /* Conversion en secondes  */  
 
-     printf("Bravo, vous avez atteint la sortie en : %.2f secondes. \n\n", elapsed ) ;
+     printf("Bravo, vous avez atteint la sortie en : %lf secondes. \n\n", elapsed ) ;
      
      
      return 0 ;
