@@ -22,7 +22,7 @@ double gamma_perso = 0.1;
 double** Q;
 double epsilon = 0.2;
 char police ;
-int done = 0 ;
+int done ;
 int nb_max_moves = 1000 ;
 int nb_training = 100 ;
 
@@ -256,7 +256,6 @@ struct policy choice_policy_bolt(int state_row,int state_col) { /* Fonction choi
 }
 
 void mazeEnv_render_pos(){                                      /* Fonction d'affichage du labyrinthe, de l'état actuel et de la trajectoire */
-     mazeEnv[state_row][state_col] = 'o';
      for (int i=0; i<rows; i++) {
          for (int j=0; j< cols; j++){
              printf("%c ", mazeEnv[i][j]);
@@ -316,28 +315,30 @@ int main( int argc, char* argv[] ) {
      start = clock();                                            /* Lancement de la mesure pour connaître le délai d'éxecution de la boucle */
      printf("Le temps de départ est : %.2f\n ", start ) ;
 
-     int nb_moves ;                                       /* Nombre maximal de pas à faire lors d'une épisode pour optimiser le temps d'execution */
-  
+     
+     int nb_moves ;                                       /* Limitant le nombre maximal de pas à faire lors d'une épisode pour optimiser le temps d'execution */
+
+     
      if (reponse == 1 ) {
           
-          for ( int j=0; j< nb_training ; j++ ) { 
+          for ( int j=0; j< nb_training ; j++ ) {                        /* Boucle pour fixer le nombre d'épisodes */
               mazeEnv_reset();                                           /* Initialiser la cellule courante avec la cellule de depart */
               nb_moves = 0 ;
+              done = 0 ;
               
               while ( done != 1 && nb_moves < nb_max_moves) {
                  
-          
                  struct policy state = choice_policy_eps(state_row,state_col) ; /* Choix de l'action en fonction de la police et de Q pour l'état courant */
-                 envOutput stepOut=mazeEnv_step(state.current_act) ;   /* Observation rewards and new_state */
+                 envOutput stepOut=mazeEnv_step(state.current_act) ;     /* Observation rewards and new_state */
           
-                 double rewards = stepOut.reward ;                     /* Récuperation de la récompense */
-                 int state_row_new = stepOut.new_row  ;                /* Récuperation du nouvel_état */
+                 double rewards = stepOut.reward ;                       /* Récuperation de la récompense */
+                 int state_row_new = stepOut.new_row  ;                  /* Récuperation du nouvel_état */
                  int state_col_new = stepOut.new_col ;
-                 double Q_max=state.Q_max ;                            /* Récuperation de la valeur de Q pour l'action choisie précedemment pour l'état courant */
+                 double Q_max=state.Q_max ;                              /* Récuperation de la valeur de Q pour l'action choisie précedemment pour l'état courant */
 
                  struct policy state_new = choice_policy_eps(state_row_new,state_col_new);  /* Choix de l'action en fonction de la police et de Q pour le nouvel état  */
           
-                 double Q_max_new=state_new.Q_max ;                    /* Récuperation de la valeur de Q pour l'action choisie précedemment pour le nouvel état */
+                 double Q_max_new=state_new.Q_max ;                      /* Récuperation de la valeur de Q pour l'action choisie précedemment pour le nouvel état */
          
                  Q[state_row*cols + state_col][state.current_act] +=  alpha*( rewards + gamma_perso*Q_max_new - Q_max ) ;  /* Modification de la valeur de Q */
                  state_row= state_row_new ;
@@ -350,6 +351,7 @@ int main( int argc, char* argv[] ) {
 
           /* DERNIER PARCOURS POUR AFFICHER LE CHEMIN OPTIMAL */
           mazeEnv_reset();
+          done=0;
           while ( done != 1 ) {
             
                  mazeEnv[state_row][state_col] = 'o';                  /* Marquage de l'état actuel */
@@ -369,11 +371,11 @@ int main( int argc, char* argv[] ) {
                  Q[state_row*cols + state_col][state.current_act] +=  alpha*( rewards + gamma_perso*Q_max_new - Q_max ) ;  /* Modification de la valeur de Q */
                  state_row= state_row_new ;
                  state_col= state_col_new ; 
-             }
-             mazeEnv_reset();
-             mazeEnv[state_row][state_col] = 's';
-             mazeEnv[goal_row][goal_col] = 'g'; 
-             mazeEnv_render_pos()  ;                               /* Affichage du chemin optimal */  
+          }
+          mazeEnv_reset();
+          mazeEnv[start_row][start_col] = 's';
+          mazeEnv[goal_row][goal_col] = 'g'; 
+          mazeEnv_render_pos()  ;                               /* Affichage du chemin optimal */  
 
            
 
