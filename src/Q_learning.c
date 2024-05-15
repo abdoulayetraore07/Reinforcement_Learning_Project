@@ -472,9 +472,9 @@ int main( int argc, char* argv[] ) {
 
 
      end = clock();                                    /* Arrêt de la mesure     */ 
-     elapsed = ((double)end - start) / CLOCKS_PER_SEC; /* Conversion en secondes  */  
+     elapsed = (end - start) / CLOCKS_PER_SEC; /* Conversion en secondes  */  
 
-     printf("Bravo, vous avez atteint la sortie en : %.2f secondes. \n\n", elapsed ) ;
+     printf("Bravo, vous avez atteint la sortie en : %lf secondes. \n\n", elapsed ) ;
      
 
      
