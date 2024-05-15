@@ -18,13 +18,13 @@ int goal_col;
 int nb_actions = 4 ;
 int nblignes_Q ;
 double alpha=0.1;
-double gamma_perso = 0.1;
+double gamma_perso = 0.9;
 double** Q;
-double epsilon = 0.2;
+double epsilon = 0.1;
 char police ;
 int done ;
 int nb_max_moves = 100000 ;
-int nb_training = 100 ;
+int nb_training = 10000 ;
 
 
 
@@ -148,13 +148,13 @@ int max (int a, int b) {                                        /* Fonction max 
      }
 }
 
-envOutput mazeEnv_step(action a, int reponse){                               /* Fonction d'attribution de la récompense et du nouvel état */
+envOutput mazeEnv_step(action a, int reponse){                  /* Fonction d'attribution de la récompense et du nouvel état */
     int rewards = 0;
     envOutput stepOut;
     int state_row_new=state_row;
     int state_col_new=state_col;
      
-    if (a==up){
+    if (a==up){                                                 /* Mise à jour du nouvel état en fonction de l'action */
        state_row_new= max(0,state_row -1);
     }else if (a==down){
        state_row_new = min(rows,state_row +1);
@@ -164,34 +164,34 @@ envOutput mazeEnv_step(action a, int reponse){                               /* 
        state_col_new = max(0,state_col -1);
     }
    
-   if ( reponse==1 )  {
+   if ( reponse==1 )  {                                         /* Fonction de récompense dans le cas Epsilon_greedy  */
 
-          if ( visited[state_row_new][state_col_new]==wall ) {
+          if ( visited[state_row_new][state_col_new]==wall ) {  // Cas rencontre d'un mur
                rewards = -100 ; 
                state_row_new=state_row;
                state_col_new=state_col; 
-          } else {
-               rewards = -5 ;
+          } else {                                              // Cas non mur et non atteinte du goal
+               rewards = -1 ;
           }
      
-          if((state_row == goal_row) && (state_col == goal_col)){
+          if((state_row == goal_row) && (state_col == goal_col)){  // Cas atteinte du goal  
                done   = 1 ;
                rewards = 100 ; 
           }
 
-   } else {
+   } else {                                                     /* Fonction de récompense dans le cas Boltzman  */
 
-          if ( visited[state_row_new][state_col_new]==wall ) {
-               rewards = -135; 
+          if ( visited[state_row_new][state_col_new]==wall ) {  // Cas rencontre d'un mur         
+               rewards = -100; 
                state_row_new=state_row;
                state_col_new=state_col; 
-          } else {
-               rewards = -0.3 ; // rewarder (state_row_new,state_col_new,goal_row,goal_col) ;
+          } else {                                              // Cas non mur et non atteinte du goal
+               rewards = -50 ; 
           }
      
-          if((state_row == goal_row) && (state_col == goal_col)){
+          if((state_row == goal_row) && (state_col == goal_col)){  // Cas atteinte du goal 
                done   = 1;
-               rewards = 5 ;
+               rewards = 3 ;
           }
 
    }
@@ -338,11 +338,11 @@ int main( int argc, char* argv[] ) {
      int nb_moves ;                                       /* Limitant le nombre maximal de pas à faire lors d'une épisode pour optimiser le temps d'execution */
 
      
-     if ( reponse == 1 ) {
+     if ( reponse == 1 ) {                           // CAS CHOIX DE LA POLICE EPSILON-GREEDY
           
           for ( int j=1; j<=nb_training ; j++ ) {                        /* Boucle pour fixer le nombre d'épisodes */
               mazeEnv_reset();                                           /* Initialiser la cellule courante avec la cellule de depart */
-              nb_moves = 0 ;
+              nb_moves = 0 ;                                             
               done = 0 ;
               
               while ( done != 1 && nb_moves < nb_max_moves) {
@@ -403,10 +403,10 @@ int main( int argc, char* argv[] ) {
            
 
      }
-     else {
+     else {                                        // CAS CHOIX DE LA POLICE EXPLORATION DE BOLTZMAN
 
           for ( int j=1; j<=nb_training ; j++ ) {                        /* Boucle pour fixer le nombre d'épisodes */
-               mazeEnv_reset();                                           /* Initialiser la cellule courante avec la cellule de depart */
+               mazeEnv_reset();                                          /* Initialiser la cellule courante avec la cellule de depart */
                nb_moves = 0 ;
                done = 0 ;
               
