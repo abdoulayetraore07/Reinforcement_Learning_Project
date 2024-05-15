@@ -53,7 +53,7 @@ void mazeEnv_render_pos();
 
 void mazeEnv_reset();
 
-envOutput mazeEnv_step(action a);
+envOutput mazeEnv_step(action a, int reponse);
 
 action env_action_sample();
 
