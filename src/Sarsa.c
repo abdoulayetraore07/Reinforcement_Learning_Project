@@ -18,11 +18,14 @@ int goal_col;
 int nb_actions = 4 ;
 int nblignes_Q ;
 double alpha=0.1;
-double gamma_perso=0.1;
+double gamma_perso = 0.9;
 double** Q;
-double epsilon=0.2;
+double epsilon = 0.1;
 char police ;
-int done = 0 ;
+int done ;
+int nb_max_moves = 100000 ;
+int nb_training = 10000 ;
+
 
 
 void alloc_mazeEnv(){                                           /* Creation du labyrinthe */
@@ -54,10 +57,10 @@ void mazeEnv_make(char* file_name){                             /* Fonction de c
                } else if (c==',') {
                       swap = 1;
                } else if (!swap) {
-                      rows_s[rows_i]=c;
+                      rows_s[rows_i]= c ;
                       rows_i++;
                } else {
-                      cols_s[cols_i]= c;
+                      cols_s[cols_i]= c ;
                       cols_i++;
                }
          }
@@ -145,13 +148,13 @@ int max (int a, int b) {                                        /* Fonction max 
      }
 }
 
-envOutput mazeEnv_step(action a){                               /* Fonction d'attribution de la récompense et du nouvel état */
+envOutput mazeEnv_step(action a, int reponse){                  /* Fonction d'attribution de la récompense et du nouvel état */
     int rewards = 0;
     envOutput stepOut;
     int state_row_new=state_row;
     int state_col_new=state_col;
      
-    if (a==up){
+    if (a==up){                                                 /* Mise à jour du nouvel état en fonction de l'action */
        state_row_new= max(0,state_row -1);
     }else if (a==down){
        state_row_new = min(rows,state_row +1);
@@ -160,20 +163,40 @@ envOutput mazeEnv_step(action a){                               /* Fonction d'at
     }else if (a==left){
        state_col_new = max(0,state_col -1);
     }
+   
+   if ( reponse==1 )  {                                         /* Fonction de récompense dans le cas Epsilon_greedy  */
 
-   if ( visited[state_row_new][state_col_new]==wall ) {
-        rewards = -1000000; 
-        state_row_new=state_row;
-        state_col_new=state_col; 
-        printf("Mur\n\n");
-   } else {
-        rewards = rewarder (state_row_new,state_col_new,goal_row,goal_col) ;
-        printf("Non Mur\n\n");
-   }
+          if ( visited[state_row_new][state_col_new]==wall ) {  // Cas rencontre d'un mur
+               rewards = -100 ; 
+               state_row_new=state_row;
+               state_col_new=state_col; 
+          } else {                                              // Cas non mur et non atteinte du goal
+               rewards = -1 ;
+          }
      
-    if((state_row == goal_row) && (state_col == goal_col)){
-       done   = 1;
-    }
+          if((state_row == goal_row) && (state_col == goal_col)){  // Cas atteinte du goal  
+               done   = 1 ;
+               rewards = 100 ; 
+          }
+
+   } else {                                                     /* Fonction de récompense dans le cas Boltzman  */
+
+          if ( visited[state_row_new][state_col_new]==wall ) {  // Cas rencontre d'un mur         
+               rewards = -100; 
+               state_row_new=state_row;
+               state_col_new=state_col; 
+          } else {                                              // Cas non mur et non atteinte du goal
+               rewards = -50 ; 
+          }
+     
+          if((state_row == goal_row) && (state_col == goal_col)){  // Cas atteinte du goal 
+               done   = 1;
+               rewards = 3 ;
+          }
+
+   }
+
+
 
     stepOut.reward = rewards ;
     stepOut.done   = done;
@@ -253,7 +276,6 @@ struct policy choice_policy_bolt(int state_row,int state_col) { /* Fonction choi
 }
 
 void mazeEnv_render_pos(){                                      /* Fonction d'affichage du labyrinthe, de l'état actuel et de la trajectoire */
-     mazeEnv[state_row][state_col] = 'o';
      for (int i=0; i<rows; i++) {
          for (int j=0; j< cols; j++){
              printf("%c ", mazeEnv[i][j]);
@@ -270,6 +292,7 @@ int main( int argc, char* argv[] ) {
 
      mazeEnv_make("maze.txt");                                  /* Creation du labyrinthe */
      nblignes_Q = rows*cols ;
+  
      int limit_Q= 2 ;                                          /* Limite des valeurs de Q */
 
      Q = malloc(nblignes_Q * sizeof(double));                   /* Creation du tableau Q */
@@ -297,26 +320,26 @@ int main( int argc, char* argv[] ) {
 
 
 
-      /*** Partie training ***/
-
-     /* INITIALISATION */
-
-     mazeEnv_reset();                                           /* Initialiser la cellule courante avec la cellule de depart */
+      /*** PARTIE TRAINING ***/
 
 
-     int reponse = 0;                                           /*Choix de la police à utiliser entre epsilon_greedy et exploration de Boltzman*/
+     int reponse = 0;                                            /* Choix de la police à utiliser entre epsilon_greedy et Boltzman */
      do {      
           printf("Tapez le chiffre 1 pour la police epsilon_greedy ou 2 pour l'exploration de Boltzman\n ") ;
           scanf("%d",&reponse) ;
      } while ( reponse != 1 && reponse != 2) ;
+
+     clock_t start, end; 
+     double elapsed; 
+  
      
 
-     clock_t start, end;                                         /* Variables pour mesurer le temps d'éxécution de la boucle */                      
-     double elapsed; 
+     
+     int nb_moves ;                                       /* Limitant le nombre maximal de pas à faire lors d'une épisode pour optimiser le temps d'execution */
 
-
-     if (reponse == 1 ) {                                       //CAS = Espilon greedy ;
-
+     
+     if ( reponse == 1 ) {                           // CAS CHOIX DE LA POLICE EPSILON-GREEDY
+          
           /* Choix de l'action de départ en fonction de la police Q */ 
 
           struct policy state = choice_policy_eps(state_row,state_col) ; /* Choix de l'action en fonction de la police et de Q pour l'état courant */
