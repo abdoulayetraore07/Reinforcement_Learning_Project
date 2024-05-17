@@ -4,6 +4,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
+#include <limits.h>
 
 char** mazeEnv;
 int** visited;
@@ -25,6 +26,7 @@ char police ;
 int done ;
 int nb_max_moves = 100000 ;
 int nb_training = 10000 ;
+int nb_normalise = 75 ;
 
 
 
@@ -182,16 +184,16 @@ envOutput mazeEnv_step(action a, int reponse){                  /* Fonction d'at
    } else {                                                     /* Fonction de récompense dans le cas Boltzman  */
 
           if ( visited[state_row_new][state_col_new]==wall ) {  // Cas rencontre d'un mur         
-               rewards = -100; 
+               rewards = -1000; 
                state_row_new=state_row;
                state_col_new=state_col; 
           } else {                                              // Cas non mur et non atteinte du goal
-               rewards = -50 ; 
+               rewards = -100 ; 
           }
      
           if((state_row == goal_row) && (state_col == goal_col)){  // Cas atteinte du goal 
                done   = 1;
-               rewards = 3 ;
+               rewards = 1000 ;
           }
 
    }
@@ -236,15 +238,16 @@ struct policy choice_policy_eps(int state_row,int state_col) {  /* Fonction choi
 
 struct policy choice_policy_bolt(int state_row,int state_col) { /* Fonction choice_policy par exploration de boltzman */
      
+
      double somme_expo = 0;
      for (int j=0; j< nb_actions ; j++ ) {
-          somme_expo+= exp(Q[state_row*cols + state_col][j]);
+          somme_expo+= exp((Q[state_row*cols + state_col][j])/nb_normalise);                     // On normalise par somme_expo 
      }
 
-     double proba_up = exp(Q[state_row*cols + state_col][0]) / somme_expo ;       /* Probabilité de choisir action up */
-     double proba_down = exp(Q[state_row*cols + state_col][1]) / somme_expo ;     /* Probabilité de choisir action down */
-     double proba_left = exp(Q[state_row*cols + state_col][2]) / somme_expo ;     /* Probabilité de choisir action left */
-     // double proba_right = exp(Q[state_row*cols + state_col][3]) / somme_expo ;    /* Probabilité de choisir action right */   Inutilisée
+     double proba_up = exp((Q[state_row*cols + state_col][0])/nb_normalise) / somme_expo ;       /* Probabilité de choisir action up */
+     double proba_down = exp((Q[state_row*cols + state_col][1])/nb_normalise) / somme_expo ;     /* Probabilité de choisir action down */
+     double proba_left = exp((Q[state_row*cols + state_col][2])/nb_normalise) / somme_expo ;     /* Probabilité de choisir action left */
+     // double proba_right = exp((Q[state_row*cols + state_col][3])/nb_normalise) / somme_expo ;    /* Probabilité de choisir action right */   // Inutilisée
 
      int alea=rand() % 100 ;                                                      /* Choix d'un nombre aléatoire entre 0 et 99 */
      enum action current_act = 0 ;                     
