@@ -149,6 +149,19 @@ int max (int a, int b) {                                        /* Fonction max 
      }
 }
 
+struct policy maxi_Q ( int state_rows, int state_cols ) {                                       /* Fonction retournant la veleur de maximale de Q dans l'état s et l'action correspondant */
+     double Q_max= Q[state_rows*cols + state_cols][0];
+     enum action current_act = up ;
+     for ( int j=1; j<nb_actions; j++ ) {    
+          if (Q_max < Q[state_rows*cols + state_cols][j]) { 
+               Q_max= Q[state_rows*cols + state_cols][j];
+               current_act = (enum action) (j) ; 
+          }        
+     }  
+     struct policy retour= {Q_max,current_act} ;
+     return retour ;
+}
+
 envOutput mazeEnv_step(action a, int reponse){                  /* Fonction d'attribution de la récompense et du nouvel état */
     int rewards = 0;
     envOutput stepOut;
@@ -214,14 +227,10 @@ struct policy {                                                 /* Struct pour r
 
 struct policy choice_policy_eps(int state_row,int state_col) {  /* Fonction choice_policy par epsilon_greedy */
 
-     double Q_max= Q[state_row*cols + state_col][0];
-     enum action current_act = up ;
-     for ( int j=1; j<nb_actions; j++ ) {    
-          if (Q_max < Q[state_row*cols + state_col][j]) { 
-               Q_max= Q[state_row*cols + state_col][j];
-               current_act = (enum action) (j) ; 
-          }        
-     }   
+     struct policy retour = maxi_Q() ;                          /* Fonction retournant la veleur de maximale de Q dans l'état s et l'action correspondant */
+     enum action current_act = retour.current_act ;
+     double Q_max = retour.Q_max
+
      int alea_1=rand() % 100 ;
      int borne= 100*epsilon ;
      if (alea_1<borne) {
