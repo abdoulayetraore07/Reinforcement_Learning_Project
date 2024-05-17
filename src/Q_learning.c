@@ -291,6 +291,11 @@ void mazeEnv_render_pos(){                                      /* Fonction d'af
 
 int main( int argc, char* argv[] ) {
      
+     clock_t start, end; 
+     unsigned long elapsed; 
+     start = clock();                                          /* Lancement de la mesure pour connaître le délai d'éxecution de la boucle */
+     
+
      srand( time( NULL ) );                                     
 
      mazeEnv_make("maze.txt");                                  /* Creation du labyrinthe */
@@ -332,11 +337,8 @@ int main( int argc, char* argv[] ) {
           scanf("%d",&reponse) ;
      } while ( reponse != 1 && reponse != 2) ;
 
-     clock_t start, end; 
-     double elapsed; 
-  
      
-
+  
      
      int nb_moves ;                                       /* Limitant le nombre maximal de pas à faire lors d'une épisode pour optimiser le temps d'execution */
 
@@ -375,8 +377,7 @@ int main( int argc, char* argv[] ) {
           mazeEnv_reset();
           done=0;
 
-          start = clock();                                            /* Lancement de la mesure pour connaître le délai d'éxecution de la boucle */
-     
+                                                     
           
           while ( done != 1 ) {
             
@@ -440,8 +441,6 @@ int main( int argc, char* argv[] ) {
           mazeEnv_reset();
           done=0;
 
-          start = clock();                                            /* Lancement de la mesure pour connaître le délai d'éxecution de la boucle */
-     
           
           while ( done != 1 ) {
             
@@ -475,9 +474,9 @@ int main( int argc, char* argv[] ) {
 
 
      end = clock();                                    /* Arrêt de la mesure     */ 
-     elapsed = (end - start) / CLOCKS_PER_SEC; /* Conversion en secondes  */  
+     elapsed = (end - start) / 1000 ; /* Conversion en secondes  */  
 
-     printf("Bravo, vous avez atteint la sortie en : %lf secondes. \n\n", elapsed ) ;
+     printf("Bravo, vous avez atteint la sortie en : %ld millisecondes. \n\n", elapsed ) ;
      
 
      
