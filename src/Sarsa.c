@@ -244,7 +244,7 @@ struct policy choice_policy_bolt(int state_row,int state_col) { /* Fonction choi
      double proba_up = exp(Q[state_row*cols + state_col][0]) / somme_expo ;       /* Probabilité de choisir action up */
      double proba_down = exp(Q[state_row*cols + state_col][1]) / somme_expo ;     /* Probabilité de choisir action down */
      double proba_left = exp(Q[state_row*cols + state_col][2]) / somme_expo ;     /* Probabilité de choisir action left */
-     double proba_right = exp(Q[state_row*cols + state_col][3]) / somme_expo ;    /* Probabilité de choisir action right */  
+     // double proba_right = exp(Q[state_row*cols + state_col][3]) / somme_expo ;    /* Probabilité de choisir action right */  Inutilisée
 
      int alea=rand() % 100 ;                                                      /* Choix d'un nombre aléatoire entre 0 et 99 */
      enum action current_act = 0 ;                     
@@ -307,7 +307,7 @@ int main( int argc, char* argv[] ) {
           }     
      }    
   
-     int start_row_Q= start_row*cols + start_col ;              /*  Numero cellule du start dans le labyrinthe */
+     // int start_row_Q= start_row*cols + start_col ;              /*  Numero cellule du start dans le labyrinthe */
      int goal_row_Q= goal_row*cols + goal_col ;                 /*  Numero cellule du goal dans le labyrinthe */
     
      for (int j=0; j<nb_actions; j++ )  {                       /* Initialisation du tableau Q dans le cas terminal */
@@ -346,18 +346,48 @@ int main( int argc, char* argv[] ) {
           action current_act = state.current_act ;
 
 
+          for ( int j=1; j<=nb_training ; j++ ) {                        /* Boucle pour fixer le nombre d'épisodes */
+              mazeEnv_reset();                                           /* Initialiser la cellule courante avec la cellule de depart */
+              nb_moves = 0 ;                                             
+              done = 0 ;
+              
+               while ( done != 1 && nb_moves < nb_max_moves ) {
 
-          clock_t start, end;                                        /* Lancement de la mesure pour connaître le délai d'éxecution de la boucle */
-          double elapsed; 
-  
-          start = clock();                                           
-          printf("Le temps de départ est : %.2lu\n ", start ) ;
+                    envOutput stepOut=mazeEnv_step(current_act,reponse) ;   /* Observation rewards and new_state */
+          
+                    double rewards = stepOut.reward ;                     /* Récuperation de la récompense */
+                    int state_row_new = stepOut.new_row  ;                /* Récuperation du nouvel_état */
+                    int state_col_new = stepOut.new_col ;
+                    double Q_max=state.Q_max ;                            /* Récuperation de la valeur de Q pour l'action choisie précedemment pour l'état courant */
 
+                    struct policy state_new = choice_policy_eps(state_row_new,state_col_new);  /* Choix de l'action en fonction de la police et de Q pour le nouvel état  */
+          
+                    double Q_max_new=state_new.Q_max ;                    /* Récuperation de la valeur de Q pour l'action choisie précedemment pour le nouvel état */
+         
+                    Q[state_row*cols + state_col][state.current_act] +=  alpha*( rewards + gamma_perso*Q_max_new - Q_max ) ;  /* Modification de la valeur de Q */
+                    state_row= state_row_new ;
+                    state_col= state_col_new ; 
+                    current_act=state_new.current_act ;
+                    ++nb_moves ;
+               }
+               printf("Épisode %d/%d terminée \n\n\n",j, nb_training );  
+             
+          }
+
+          /* DERNIER PARCOURS POUR AFFICHER LE CHEMIN OPTIMAL */
+          mazeEnv_reset();
+          done=0;
+          
+          start = clock();                                            /* Lancement de la mesure pour connaître le délai d'éxecution de la boucle */
+     
+          state = choice_policy_eps(state_row,state_col) ; /* Choix de l'action en fonction de la police et de Q pour l'état courant */
+          current_act = state.current_act ;
+          
           while ( done != 1 ) {
-               printf("-----------------------------------------------\n\n\n");  
-               mazeEnv_render_pos()  ;                               /* Affichage de l'etat actuel */  
+              
+               mazeEnv[state_row][state_col] = 'o';                  /* Marquage de l'état actuel */ 
 
-               envOutput stepOut=mazeEnv_step(current_act) ;   /* Observation rewards and new_state */
+               envOutput stepOut=mazeEnv_step(current_act,reponse) ;   /* Observation rewards and new_state */
           
                double rewards = stepOut.reward ;                     /* Récuperation de la récompense */
                int state_row_new = stepOut.new_row  ;                /* Récuperation du nouvel_état */
@@ -372,7 +402,13 @@ int main( int argc, char* argv[] ) {
                state_row= state_row_new ;
                state_col= state_col_new ; 
                current_act=state_new.current_act ;
-     }
+          }
+          mazeEnv_reset();
+          mazeEnv[start_row][start_col] = 's';
+          mazeEnv[goal_row][goal_col] = 'g'; 
+          mazeEnv_render_pos()  ;                               /* Affichage du chemin optimal */  
+
+
 
      }
      else {                                                          //CAS = Exploration de Boltzman ;
@@ -383,16 +419,49 @@ int main( int argc, char* argv[] ) {
           struct policy state = choice_policy_bolt(state_row,state_col) ; /* Choix de l'action en fonction de la police et de Q pour l'état courant */
           action current_act = state.current_act ;
 
-  
-          start = clock();                                           
-          printf("Le temps de départ est : %.2lu\n ", start ) ;             /* Lancement de la mesure pour connaître le délai d'éxecution de la boucle */
 
+          for ( int j=1; j<=nb_training ; j++ ) {                        /* Boucle pour fixer le nombre d'épisodes */
+              mazeEnv_reset();                                           /* Initialiser la cellule courante avec la cellule de depart */
+              nb_moves = 0 ;                                             
+              done = 0 ;
+              
+               while ( done != 1 && nb_moves < nb_max_moves ) {
 
+                    envOutput stepOut=mazeEnv_step(current_act,reponse) ;   /* Observation rewards and new_state */
+          
+                    double rewards = stepOut.reward ;                     /* Récuperation de la récompense */
+                    int state_row_new = stepOut.new_row  ;                /* Récuperation du nouvel_état */
+                    int state_col_new = stepOut.new_col ;
+                    double Q_max=state.Q_max ;                            /* Récuperation de la valeur de Q pour l'action choisie précedemment pour l'état courant */
+
+                    struct policy state_new = choice_policy_bolt(state_row_new,state_col_new);  /* Choix de l'action en fonction de la police et de Q pour le nouvel état  */
+          
+                    double Q_max_new=state_new.Q_max ;                    /* Récuperation de la valeur de Q pour l'action choisie précedemment pour le nouvel état */
+         
+                    Q[state_row*cols + state_col][state.current_act] +=  alpha*( rewards + gamma_perso*Q_max_new - Q_max ) ;  /* Modification de la valeur de Q */
+                    state_row= state_row_new ;
+                    state_col= state_col_new ; 
+                    current_act=state_new.current_act ;
+                    ++nb_moves ;
+               }
+               printf("Épisode %d/%d terminée \n\n\n",j, nb_training );  
+             
+          }
+
+          /* DERNIER PARCOURS POUR AFFICHER LE CHEMIN OPTIMAL */
+          mazeEnv_reset();
+          done=0;
+          
+          start = clock();                                            /* Lancement de la mesure pour connaître le délai d'éxecution de la boucle */
+     
+          state = choice_policy_bolt(state_row,state_col) ; /* Choix de l'action en fonction de la police et de Q pour l'état courant */
+          current_act = state.current_act ;
+          
           while ( done != 1 ) {
-               printf("-----------------------------------------------\n\n\n");  
-               mazeEnv_render_pos()  ;                               /* Affichage de l'etat actuel */  
+              
+               mazeEnv[state_row][state_col] = 'o';                  /* Marquage de l'état actuel */ 
 
-               envOutput stepOut=mazeEnv_step(current_act) ;   /* Observation rewards and new_state */
+               envOutput stepOut=mazeEnv_step(current_act,reponse) ;   /* Observation rewards and new_state */
           
                double rewards = stepOut.reward ;                     /* Récuperation de la récompense */
                int state_row_new = stepOut.new_row  ;                /* Récuperation du nouvel_état */
@@ -407,7 +476,12 @@ int main( int argc, char* argv[] ) {
                state_row= state_row_new ;
                state_col= state_col_new ; 
                current_act=state_new.current_act ;
-     }
+          }
+          mazeEnv_reset();
+          mazeEnv[start_row][start_col] = 's';
+          mazeEnv[goal_row][goal_col] = 'g'; 
+          mazeEnv_render_pos()  ;                               /* Affichage du chemin optimal */  
+
 
      }
 
