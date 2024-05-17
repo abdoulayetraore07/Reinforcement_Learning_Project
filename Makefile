@@ -1,3 +1,5 @@
+all: src/Q_learning.x src/Sarsa.x
+
 src/dfs         : src/dfs.o src/functions.o src/mazeEnv.o
 	gcc -I include/ -g -o src/dfs src/dfs.o src/functions.o src/mazeEnv.o -Wall
 
@@ -11,10 +13,10 @@ src/mazeEnv.o   : src/mazeEnv.c include/mazeEnv.h
 	gcc -I include/ -g -o src/mazeEnv.o -c src/mazeEnv.c -Wall
 
 src/Q_learning.x	: src/Q_learning.c include/mazeEnv.h include/functions.h include/mazeEnv.h
-	gcc -I include/ -g -o src/Q_learning.o -c src/Q_learning.c -Wall
+	gcc -I include/ -o src/Q_learning.x -c src/Q_learning.c -Wall
 
 src/Sarsa.x	: src/Sarsa.c include/mazeEnv.h include/functions.h include/mazeEnv.h
-	gcc -I include/ -g -o src/Sarsa.o -c src/Sarsa.c -Wall
+	gcc -I include/ -o src/Sarsa.x -c src/Sarsa.c -Wall
 
 clean		:		
 	rm -f *~ *.o
