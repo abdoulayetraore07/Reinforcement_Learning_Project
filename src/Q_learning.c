@@ -244,7 +244,7 @@ struct policy choice_policy_bolt(int state_row,int state_col) { /* Fonction choi
      double proba_up = exp(Q[state_row*cols + state_col][0]) / somme_expo ;       /* Probabilité de choisir action up */
      double proba_down = exp(Q[state_row*cols + state_col][1]) / somme_expo ;     /* Probabilité de choisir action down */
      double proba_left = exp(Q[state_row*cols + state_col][2]) / somme_expo ;     /* Probabilité de choisir action left */
-     double proba_right = exp(Q[state_row*cols + state_col][3]) / somme_expo ;    /* Probabilité de choisir action right */  
+     // double proba_right = exp(Q[state_row*cols + state_col][3]) / somme_expo ;    /* Probabilité de choisir action right */   Inutilisée
 
      int alea=rand() % 100 ;                                                      /* Choix d'un nombre aléatoire entre 0 et 99 */
      enum action current_act = 0 ;                     
