@@ -13,7 +13,7 @@ double gamma_perso = 0.9;
 double** Q;
 double epsilon = 0.1;
 int nb_max_moves = 100000 ;
-int nb_training = 1000000 ;
+int nb_training = 100 ;
 int nb_normalise = 75 ;
 int* grille ;
 int state ;
@@ -201,8 +201,6 @@ double maxi_Q ( int new_state ) {     /* Fonction retournant la veleur de maxima
 /* Programme principal */
 
 int main() {
-
-    srand( time( NULL ) );
         
     // On crée une grille vide
     grille = creer_grille();
@@ -227,42 +225,43 @@ int main() {
     for ( int j=1; j<=nb_training ; j++ ) {                    // Boucle pour faire les épisodes  
 
         int action ;
-        int action_machine ;
         init_grille() ;
         state = convert_grille_etat() ;
         int finie = 0;                                             // Variable booléenne représentant si la partie est finie ou pas
         int reward = 0 ;
-        int Q_max ;
+        double Q_max ;
    
-        int tours = 0;                                             // Nombre de tours joués
 
         printf("\n\nDebut épisode %d/%d\n",j, nb_training ); 
 
         while (!finie) {
-        
-            tours = tours + 1 ;
+            srand( time( NULL ) );
             action =  choice_policy_eps( state ) ;
             placer( action, 1 );                                        // Joueur = 1 represente RL et Joueur = 2 represente choix_aléatoire ou humain ;
+
             if (a_gagne(1)) {
-                reward = 1000000 ;
+                reward = 10000 ;
                 new_state = convert_grille_etat() ;
                 Q_max = maxi_Q(new_state) ;
                 finie = 1 ; 
-                Q[state][action] += alpha * ( reward + gamma_perso * Q_max - Q[state][action]);
+                Q[state][action-1] += alpha * ( reward + gamma_perso * Q_max - Q[state][action-1]);
             } else {
-                reward = 1000 ;
                 if (!est_plein()) {
                     placer_alea(2);
                     if (a_gagne(2)) {
-                        reward = -1000000 ;
+                        reward = -10000 ;
                         finie = 1 ;
+                    }
+                    else {
+                        reward=1 ;
                     }
                 } else {
                     finie = 1 ;
+                    reward = 1 ;
                 }
                 new_state = convert_grille_etat() ;
                 Q_max = maxi_Q(new_state) ;
-                Q[state][action] += alpha * ( reward + gamma_perso * Q_max - Q[state][action]);
+                Q[state][action-1] += alpha * ( reward + gamma_perso * Q_max - Q[state][action-1]);
             }
             state = new_state ;
            
@@ -355,6 +354,11 @@ int main() {
     }
 
     printf("\nJeu terminé\n\n" ) ; 
+    for (int i = 0; i < nblignes_Q; i++) {
+    free(Q[i]);
+    }
+    free(Q);
+    free(grille);
     return 0 ;
 
 
