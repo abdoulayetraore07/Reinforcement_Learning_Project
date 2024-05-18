@@ -7,13 +7,14 @@
 #include <limits.h>
 
 int nb_actions = 9 ;     // Neuf choix maximum possibles en toute généralité
-int nblignes_Q = 19683 + 1 ; // Le nombre total de combinaisons possibles pour un plateau de 3x3 avec trois états possibles pour chaque case est donné par 19683 car chaque case peut être dans l'un des trois états indépendamment des autres cases.
+int nblignes_Q = 19683 ; // Le nombre total de combinaisons possibles pour un plateau de 3x3 avec trois états possibles pour chaque case est donné par 19683 car chaque case peut être dans l'un des trois états indépendamment des autres cases.
 double alpha=0.1;
-double gamma_perso = 0.9;
+double gamma_perso = 0.95;
 double** Q;
-double epsilon = 0.1;
+double epsilon = 1.0;       // Epsilon depart
+double epsilon_final = 0.1; // Epsilon final
 int nb_max_moves = 100000 ;
-int nb_training = 100 ;
+int nb_training = 10000000 ;
 int nb_normalise = 75 ;
 int* grille ;
 int state ;
@@ -86,6 +87,9 @@ int a_gagne(int joueur) {
     // n'a que des cases occupées par le joueur.
     
    // verticale
+
+
+
    for (int i=0;i<3;++i) {
           test = 1;
        // tester la i+1-ième colonne
@@ -198,6 +202,39 @@ double maxi_Q ( int new_state ) {     /* Fonction retournant la veleur de maxima
     return Q_max ;
 }
 
+void sauvegarder_Q(char* filename) {
+    FILE* fichier = fopen(filename, "w");
+    if (fichier == NULL) {
+        perror("Erreur lors de l'ouverture du fichier");
+        exit(EXIT_FAILURE);
+    }
+    for (int i = 0; i < nblignes_Q; i++) {
+        for (int j = 0; j < nb_actions; j++) {
+            fprintf(fichier, "%lf ", Q[i][j]);
+        }
+        fprintf(fichier, "\n");
+    }
+    fclose(fichier);
+}
+
+void charger_Q(char* filename) {
+    FILE* fichier = fopen(filename, "r");
+    if (fichier == NULL) {
+        perror("Erreur lors de l'ouverture du fichier");
+        exit(EXIT_FAILURE);
+    }
+    for (int i = 0; i < nblignes_Q; i++) {
+        for (int j = 0; j < nb_actions; j++) {
+            if (fscanf(fichier, "%lf", &Q[i][j]) != 1) {
+                perror("Erreur lors de la lecture du fichier");
+                exit(EXIT_FAILURE);
+            }
+        }
+    }
+    fclose(fichier);
+}
+
+
 /* Programme principal */
 
 int main() {
@@ -205,19 +242,12 @@ int main() {
     // On crée une grille vide
     grille = creer_grille();
 
-    int limit_Q= 2 ;                                           /* Limite des valeurs de Q */
-
     Q = malloc(nblignes_Q * sizeof(double));                   /* Creation du tableau Q */
     for(int i=0; i<nblignes_Q; i++) {
          Q[i] = malloc(nb_actions * sizeof(double));
     }
-     
-    for (int i=0; i<nblignes_Q; i++ ) {                        /* Initialisation du tableau Q */
-        for ( int j=0; j<nb_actions; j++ ) {                           
-              int temp = rand() % (2*limit_Q) ;                /* Nombre aléatoire pour remplir Q entre -limit_Q et limit_Q */
-              Q[i][j]= temp-limit_Q ;
-        }     
-    }    
+    
+    charger_Q("Q_values.txt");                                 /* Initialisation du tableau Q */
 
 
     /* PARTIE TRAINING */
@@ -230,7 +260,12 @@ int main() {
         int finie = 0;                                             // Variable booléenne représentant si la partie est finie ou pas
         int reward = 0 ;
         double Q_max ;
-   
+
+        // Réduction de epsilon sur les épisodes
+        epsilon = epsilon - (1.0 - epsilon_final) / nb_training;
+        if (epsilon < epsilon_final) {
+            epsilon = epsilon_final;
+        }
 
         printf("\n\nDebut épisode %d/%d\n",j, nb_training ); 
 
@@ -257,7 +292,7 @@ int main() {
                     }
                 } else {
                     finie = 1 ;
-                    reward = 1 ;
+                    reward = 0 ;
                 }
                 new_state = convert_grille_etat() ;
                 Q_max = maxi_Q(new_state) ;
@@ -274,6 +309,7 @@ int main() {
         
     }
 
+    sauvegarder_Q("Q_values.txt");   // On sauvegarde les valeurs de Q vu que un bon entrainement demande beaucoup de temps compare au cas du labyrinthe ;
 
     /* PARTIE POUR PERMETTRE A UN HUMAIN DE JOUER APRES LE TRAINING */
 
