@@ -228,12 +228,11 @@ envOutput mazeEnv_step(action a, int reponse){                  /* Fonction d'at
 struct policy choice_policy_eps(int state_row,int state_col) {  /* Fonction choice_policy par epsilon_greedy */
 
      struct policy retour = maxi_Q (state_row, state_col) ;                          /* Fonction retournant la veleur de maximale de Q dans l'état s et l'action correspondant */
-     enum action current_act = retour.current_act ;
-     double Q_max = retour.Q_max ;
 
      int alea_1=rand() % 100 ;
-     int borne= 100*epsilon ;
-     if (alea_1<borne) {
+     int borne= 100*epsilon ;                                   /* Multiplication par 100 pour se ramener entre 0 et 100 pour faciliter le tirage aléatoire de nombre */
+
+     if (alea_1<borne) {                                        /* Choix d'une action aléatoire avec probabilite epsilon */
           int alea_2= rand()% 4 ;
           retour.current_act= (enum action) (alea_2) ;
           retour.Q_max= Q[state_row*cols + state_col][retour.current_act]; 
