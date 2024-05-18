@@ -244,10 +244,10 @@ int main() {
 
         while (!finie) {
         
-            tours = tours + 1;
-            afficher();                                                 // afficher la grille
+            tours = tours + 1 ;
             action =  choice_policy_eps( state ) ;
             placer( action, 1 );                                        // Joueur = 1 represente RL et Joueur = 2 represente choix_aléatoire ou humain ;
+            afficher();                                                 // afficher la grille
             if (a_gagne(1)) {
                 reward = 100 ;
                 new_state = convert_grille_etat() ;
@@ -258,6 +258,7 @@ int main() {
                 reward = 0 ;
                 if (!est_plein()) {
                     placer_alea(2);
+                    afficher();                                                 // afficher la grille
                     if (a_gagne(2)) {
                         reward = -100 ;
                         finie = 1 ;
@@ -276,6 +277,7 @@ int main() {
         }
         // afficher la grille à la fin du jeu,
         // et afficher qui a gagné ou si match nul (case remplie)
+        printf("\nÉpisode %d/%d terminée \n\n",j, nb_training ); 
         afficher();
         if (a_gagne(1)) {
         printf("\nGagné en %d tours.\n",tours);
@@ -286,7 +288,7 @@ int main() {
         printf("\nMatch nul en %d tours.\n",tours);
     }
         // On libère la mémoire de la grille
-        printf("Épisode %d/%d terminée \n\n\n",j, nb_training ); 
+        
     }
 
 
@@ -295,7 +297,8 @@ int main() {
     int nb_parties_jouées = 0 ;      // Variables pour définir le nombre de parties qu'un humain pourra faire apres le training ;
     int continu_jeu = 0 ;
     int partie_win = 0 ;
-    printf("Tapez 0 pour jouer ou un autre chiffre sinon\n" ) ; 
+
+    printf("Tapez 0 pour rejouer ou un autre chiffre sinon\n" ) ; 
     scanf("%d",&continu_jeu);
 
     while ( continu_jeu == 0  )   {
@@ -313,22 +316,32 @@ int main() {
         while (!finie) {
         
             tours = tours + 1;
-            afficher();                                                 // afficher la grille
             action =  choice_policy_eps( state ) ;
             placer( action, 1 );                                        // Joueur = 1 represente RL et Joueur = 2 represente choix_aléatoire ou humain ;
+            afficher();                                                 // afficher la grille
             if (a_gagne(1)) {
                 new_state = convert_grille_etat() ;
                 finie = 1 ; 
             } else {
-                if (!est_plein()) {
-                    printf("Entrez un chiffre pour placer un pion dans la case correspondante : ");
-                    scanf("%d",&action_humain);
+                if (!est_plein()) {                                     // Cas grille non pleine ; 
+                    int nb_essai=0;
+                    do {                                                // Choix de l'action de l'humain sur une case non_occupée ;
+                        ++nb_essai ;
+                        if (nb_essai>1) {
+                            printf("Alors comme ça, on veut tricher... Je te surveille petit_bonhomme\n\n");
+                        }
+                        printf("Entrez un chiffre pour placer un pion dans la case : ");
+                        scanf("%d",&action_humain);
+                    } while (is_busy(action_humain)!=0 || action_humain<0 || action_humain> 9 ) ;
+
                     // placer le symbole du joueur humain
                     placer(action_humain,2);
+                    afficher();                                                 // afficher la grille
+
                     if (a_gagne(2)) {
                         finie = 1 ;
                     }
-                } else {
+                } else {                                                 // Cas grille pleine ;
                     finie = 1 ;
                 }
                 new_state = convert_grille_etat() ;
@@ -357,6 +370,7 @@ int main() {
 
     }
 
+    printf("\nJeu terminé\n\n" ) ; 
     return 0 ;
 
 
