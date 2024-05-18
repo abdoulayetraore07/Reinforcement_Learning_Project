@@ -24,7 +24,7 @@ double** Q;
 double epsilon = 0.1;
 char police ;
 int done ;
-int nb_training = 10000 ;
+int nb_training = 100000 ;
 int nb_normalise = 75 ;
 
 
@@ -490,9 +490,9 @@ int main( int argc, char* argv[] ) {
      }
 
      end = clock();                                    /* Arrêt de la mesure     */ 
-     elapsed = (end - start)  / CLOCKS_PER_SEC; /* Conversion en secondes  */  
+     elapsed = (end - start)  / 1000 ; /* Conversion en secondes  */  
 
-     printf("Bravo, vous avez atteint la sortie en : %ld secondes. \n\n", elapsed ) ;
+     printf("Bravo, vous avez atteint la sortie en : %ld millisecondes. \n\n", elapsed ) ;
      
      
      return 0 ;
