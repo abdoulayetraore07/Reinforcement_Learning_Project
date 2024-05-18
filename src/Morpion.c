@@ -7,13 +7,13 @@
 #include <limits.h>
 
 int nb_actions = 9 ;     // Neuf choix maximum possibles en toute généralité
-int nblignes_Q = 19683 ; // Le nombre total de combinaisons possibles pour un plateau de 3x3 avec trois états possibles pour chaque case est donné par 19683 car chaque case peut être dans l'un des trois états indépendamment des autres cases.
+int nblignes_Q = 19683 + 1 ; // Le nombre total de combinaisons possibles pour un plateau de 3x3 avec trois états possibles pour chaque case est donné par 19683 car chaque case peut être dans l'un des trois états indépendamment des autres cases.
 double alpha=0.1;
 double gamma_perso = 0.9;
 double** Q;
 double epsilon = 0.1;
 int nb_max_moves = 100000 ;
-int nb_training = 1;
+int nb_training = 1000000 ;
 int nb_normalise = 75 ;
 int* grille ;
 int state ;
@@ -35,7 +35,7 @@ void init_grille() {
 /* Afficher la grille. */
 void afficher() {
     printf("\n");
-    printf("--------------------\n");
+    printf("-------------\n");
     printf("|");
     for (int i=0; i<9; ++i) {
             if (grille[i] == 0) {
@@ -50,7 +50,7 @@ void afficher() {
                 printf("|");
             }
     }
-    printf("\n--------------------\n");
+    printf("\n-------------\n");
 }
 
 /* Placer un symbole pour le joueur à la case
@@ -155,15 +155,15 @@ int choice_policy_eps( int etat ) {  /* Fonction choice_policy par epsilon_greed
     if (alea_1<borne) {     
         int alea_2 ;                                   /* Choix d'une action aléatoire avec probabilite epsilon */
         do {
-             alea_2= rand()% 9 ;     
+             alea_2= rand()% 9 + 1 ;     
         } while (is_busy(alea_2)!=0) ;  
         action=alea_2 ;   
     } else {
         int Q_max= INT_MIN ;
         for (int i = 0; i < 9; i++) {
-            if ( is_busy(i)==0 && Q[etat][i] > Q_max) {
+            if ( is_busy(i+1)==0 && Q[etat][i] > Q_max) {
                 Q_max = Q[etat][i];
-                action = i;
+                action = i+1;
             }
         }
     }
@@ -173,10 +173,10 @@ int choice_policy_eps( int etat ) {  /* Fonction choice_policy par epsilon_greed
 
 }
 
-int convert_grille_etat() {              // La base 3 est utilisée parce que chaque case du plateau peut avoir trois états distincts (vide, X, O)
-    int etat = 0;
+int convert_grille_etat( ) {              // La base 3 est utilisée parce que chaque case du plateau peut avoir trois états distincts (vide, X, O)
+    int etat  = 0;
     for (int i = 0; i < 9; i++) {
-            etat = etat * 3 + ( grille[i] == 'X' ? 1 : grille[i] == 'O' ? 2 : 0);
+            etat = etat*3 + grille[i] ;
     }
     return etat;
 }
@@ -203,13 +203,7 @@ double maxi_Q ( int new_state ) {     /* Fonction retournant la veleur de maxima
 int main() {
 
     srand( time( NULL ) );
-
-    clock_t start, end; 
-    unsigned long elapsed; 
-    start = clock();                                          /* Lancement de la mesure pour connaître le délai d'éxecution de la boucle */
-     
-   
-
+        
     // On crée une grille vide
     grille = creer_grille();
 
@@ -242,25 +236,25 @@ int main() {
    
         int tours = 0;                                             // Nombre de tours joués
 
+        printf("\n\nDebut épisode %d/%d\n",j, nb_training ); 
+
         while (!finie) {
         
             tours = tours + 1 ;
             action =  choice_policy_eps( state ) ;
             placer( action, 1 );                                        // Joueur = 1 represente RL et Joueur = 2 represente choix_aléatoire ou humain ;
-            afficher();                                                 // afficher la grille
             if (a_gagne(1)) {
-                reward = 100 ;
+                reward = 1000000 ;
                 new_state = convert_grille_etat() ;
                 Q_max = maxi_Q(new_state) ;
                 finie = 1 ; 
                 Q[state][action] += alpha * ( reward + gamma_perso * Q_max - Q[state][action]);
             } else {
-                reward = 0 ;
+                reward = 1000 ;
                 if (!est_plein()) {
                     placer_alea(2);
-                    afficher();                                                 // afficher la grille
                     if (a_gagne(2)) {
-                        reward = -100 ;
+                        reward = -1000000 ;
                         finie = 1 ;
                     }
                 } else {
@@ -277,17 +271,7 @@ int main() {
         }
         // afficher la grille à la fin du jeu,
         // et afficher qui a gagné ou si match nul (case remplie)
-        printf("\nÉpisode %d/%d terminée \n\n",j, nb_training ); 
-        afficher();
-        if (a_gagne(1)) {
-        printf("\nGagné en %d tours.\n",tours);
-    }
-        else if (a_gagne(2)) {
-        printf("\nPerdu en %d tours.\n",tours);
-        } else {
-        printf("\nMatch nul en %d tours.\n",tours);
-    }
-        // On libère la mémoire de la grille
+        printf("Épisode %d/%d terminée \n",j, nb_training ); 
         
     }
 
@@ -297,8 +281,8 @@ int main() {
     int nb_parties_jouées = 0 ;      // Variables pour définir le nombre de parties qu'un humain pourra faire apres le training ;
     int continu_jeu = 0 ;
     int partie_win = 0 ;
-
-    printf("Tapez 0 pour rejouer ou un autre chiffre sinon\n" ) ; 
+    printf("\n\n----------Training terminée----------\n" ) ; 
+    printf("\nTapez 0 pour rejouer ou un autre chiffre sinon\n" ) ; 
     scanf("%d",&continu_jeu);
 
     while ( continu_jeu == 0  )   {
