@@ -107,7 +107,7 @@ void mazeEnv_reset(){
 }
 
 //faire une action &observer récompense et où on se trouve
-envOutput mazeEnv_step(action a){
+envOutput mazeEnv_step(action a, int reponse){
     int reward = 0;
     int done = 0;
     envOutput stepOut;
