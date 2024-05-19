@@ -14,7 +14,7 @@ double** Q;
 double epsilon = 1.0;       // Epsilon depart
 double epsilon_final = 0.1; // Epsilon final
 int nb_max_moves = 100000 ;
-int nb_training = 10000000 ;
+int nb_training = 5000000 ;
 int nb_normalise = 75 ;
 int* grille ;
 int state ;
@@ -251,7 +251,7 @@ int main() {
 
 
     /* PARTIE TRAINING */
-
+    
     for ( int j=1; j<=nb_training ; j++ ) {                    // Boucle pour faire les épisodes  
 
         int action ;
@@ -261,11 +261,13 @@ int main() {
         int reward = 0 ;
         double Q_max ;
 
+        /*                      ///////////////////////////////////////
         // Réduction de epsilon sur les épisodes
         epsilon = epsilon - (1.0 - epsilon_final) / nb_training;
         if (epsilon < epsilon_final) {
             epsilon = epsilon_final;
         }
+        */
 
         printf("\n\nDebut épisode %d/%d\n",j, nb_training ); 
 
@@ -314,11 +316,14 @@ int main() {
     /* PARTIE POUR PERMETTRE A UN HUMAIN DE JOUER APRES LE TRAINING */
 
     int nb_parties_jouées = 0 ;      // Variables pour définir le nombre de parties qu'un humain pourra faire apres le training ;
-    int continu_jeu = 0 ;
+    int continu_jeu = 1 ;            ///////////////////////////////////////
     int partie_win = 0 ;
     printf("\n\n----------Training terminée----------\n" ) ; 
-    printf("\nTapez 0 pour rejouer ou un autre chiffre sinon\n" ) ; 
+
+    /*                         ///////////////////////////////////////
+    printf("\nTapez 0 pour rejouer ou un autre chiffre sinon : " ) ; 
     scanf("%d",&continu_jeu);
+    */
 
     while ( continu_jeu == 0  )   {
         
