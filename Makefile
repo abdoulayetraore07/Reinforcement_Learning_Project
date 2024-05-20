@@ -24,7 +24,6 @@ src/Morpion_2Q.x	: src/Morpion_2Q.c
 src/Morpion_Q.x	: src/Morpion_Q.c 
 	gcc -o src/Morpion_Q.x -c src/Morpion_Q.c -Wall
 
-
 clean		:		
 	rm -f *~ *.o
 
