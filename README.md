@@ -1,5 +1,7 @@
 # Reinforcement Learning Project: Maze 
 
+Welcome on our git :)
+
 Here's our repository dedicated to Reinforcement Learning. A small project will be conducted and used as a course project at ENSTA Paris.
 
 We aim here to implement different Reinforcement Learning algorithms to exit a maze first and do our project that consists of creating an IA able to play morpion game.
