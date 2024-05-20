@@ -254,7 +254,7 @@ int main() {
     
     charger_Q("data/Q_values.txt", Q);                             /* Initialisation des tableaux  Q */
 
-    printf("Training entamé \n");
+    printf("----------Training entamé----------\n");
   
     /* PARTIE TRAINING */
     
@@ -325,7 +325,7 @@ int main() {
 
     
     printf("\n\n----------Training terminée----------\n" ) ; 
-    printf("\nTapez 0 pour rejouer ou un autre chiffre sinon : " ) ; 
+    printf("\nTapez 0 pour jouer ou un autre chiffre sinon : " ) ; 
     scanf("%d",&continu_jeu);
     
     
