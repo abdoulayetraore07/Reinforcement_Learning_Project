@@ -303,7 +303,7 @@ int main( int argc, char* argv[] ) {
 
      srand( time( NULL ) );                                     
 
-     mazeEnv_make("maze.txt");                                  /* Creation du labyrinthe */
+     mazeEnv_make("data/maze.txt");                                  /* Creation du labyrinthe */
      nblignes_Q = rows*cols ;
   
      int limit_Q= 2 ;                                          /* Limite des valeurs de Q */
