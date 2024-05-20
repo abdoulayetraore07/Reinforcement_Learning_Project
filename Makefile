@@ -1,31 +1,26 @@
-all: src/Q_learning.x src/Sarsa.x src/Morpion_2Q.x src/Morpion_Q.x
+# Variables
+CC = gcc
+CFLAGS = -Wall -Iinclude
+SRC_DIR = src
 
-src/dfs         : src/dfs.o src/functions.o src/mazeEnv.o
-	gcc -I include/ -g -o src/dfs src/dfs.o src/functions.o src/mazeEnv.o -Wall
+# Cibles principales
+all: Morpion_Q Morpion_2Q Q_learning Sarsa
 
-src/dfs.o       : src/dfs.c  include/mazeEnv.h
-	gcc -I include/ -g -o src/dfs.o -c src/dfs.c -Wall
+# Compilation des fichiers .c en exécutables
+Morpion_Q: $(SRC_DIR)/Morpion_Q.c
+	$(CC) -o $@ $< $(CFLAGS)
 
-src/functions.o : src/functions.c include/functions.h
-	gcc -I include/ -g -o src/functions.o -c src/functions.c -Wall
+Morpion_2Q: $(SRC_DIR)/Morpion_2Q.c
+	$(CC) -o $@ $< $(CFLAGS)
 
-src/mazeEnv.o   : src/mazeEnv.c include/mazeEnv.h
-	gcc -I include/ -g -o src/mazeEnv.o -c src/mazeEnv.c -Wall
+Q_learning: $(SRC_DIR)/Q_learning.c
+	$(CC) -o $@ $< $(CFLAGS)
 
-src/Q_learning.x	: src/Q_learning.c include/mazeEnv.h include/functions.h include/mazeEnv.h
-	gcc -I include/ -o src/Q_learning.x -c src/Q_learning.c -Wall
+Sarsa: $(SRC_DIR)/Sarsa.c
+	$(CC) -o $@ $< $(CFLAGS)
 
-src/Sarsa.x	: src/Sarsa.c include/mazeEnv.h include/functions.h include/mazeEnv.h
-	gcc -I include/ -o src/Sarsa.x -c src/Sarsa.c -Wall
+# Nettoyage des exécutables
+clean:
+	rm -f Morpion_Q Morpion_2Q Q_learning Sarsa
 
-src/Morpion_2Q.x	: src/Morpion_2Q.c 
-	gcc -o src/Morpion_2Q.x -c src/Morpion_2Q.c -Wall
-
-src/Morpion_Q.x	: src/Morpion_Q.c 
-	gcc -o src/Morpion_Q.x -c src/Morpion_Q.c -Wall
-
-clean		:		
-	rm -f *~ *.o
-
-realclean	: clean 	
-	rm -f *.x
+.PHONY: all clean
