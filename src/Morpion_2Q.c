@@ -316,7 +316,7 @@ int main() {
     /* PARTIE TRAINING */
     
 
-    printf("\n\nDebut training\n" ); 
+    printf("\n\n----------Debut training----------\n" ); 
 
     for ( int j=1; j<=nb_training ; j++ ) {                    // Boucle pour faire les épisodes  
 
@@ -381,7 +381,7 @@ int main() {
 
     
     printf("\n\n----------Training terminée----------\n" ) ; 
-    printf("\nTapez 0 pour rejouer ou un autre chiffre sinon : " ) ; 
+    printf("\nTapez 0 pour jouer ou un autre chiffre sinon : " ) ; 
     scanf("%d",&continu_jeu);
     
     
@@ -480,5 +480,7 @@ int main() {
                                  
 
     return 0 ;
+
+    
 
 }
