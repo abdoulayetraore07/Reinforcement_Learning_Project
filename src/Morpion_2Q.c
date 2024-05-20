@@ -479,9 +479,6 @@ int main() {
     free(grille); 
                                  
 
-
-    }
-
     return 0 ;
 
 }
