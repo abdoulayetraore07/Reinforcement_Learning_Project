@@ -254,7 +254,7 @@ int main() {
         Q[i] = malloc(nb_actions * sizeof(double));
     }
     
-    charger_Q("Q_values.txt", Q);                             /* Initialisation des tableaux  Q */
+    charger_Q("data/Q_values.txt", Q);                             /* Initialisation des tableaux  Q */
 
     printf("Training entamé \n");
   
@@ -317,7 +317,7 @@ int main() {
         
     }
 
-    sauvegarder_Q("Q_values.txt", Q);   // On sauvegarde les valeurs de Q vu que un bon entrainement demande beaucoup de temps compare au cas du labyrinthe ;
+    sauvegarder_Q("data/Q_values.txt", Q);   // On sauvegarde les valeurs de Q vu que un bon entrainement demande beaucoup de temps compare au cas du labyrinthe ;
 
     /* PARTIE POUR PERMETTRE A UN HUMAIN DE JOUER APRES LE TRAINING */
 
@@ -407,7 +407,7 @@ int main() {
             printf("\nPas si loin, Match nul en %d tours.\n",tours);
         }
         
-        sauvegarder_Q("Q_values.txt", Q);   // On sauvegarde les valeurs de Q vu que un bon entrainement demande beaucoup de temps compare au cas du labyrinthe ;
+        sauvegarder_Q("data/Q_values.txt", Q);   // On sauvegarde les valeurs de Q vu que un bon entrainement demande beaucoup de temps compare au cas du labyrinthe ;
        
 
         printf("\nParties jouées : %d\nParties gagnées : %d \n\n",nb_parties_jouées, partie_win) ; // Partie statistique et rejouer ; 
