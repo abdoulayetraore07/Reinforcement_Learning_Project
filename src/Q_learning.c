@@ -25,7 +25,7 @@ double epsilon = 0.05;
 char police ;
 int done ;
 int nb_max_moves = 100000 ;
-int nb_training = 10000 ;
+int nb_training = 500 ;
 int nb_normalise = 75 ;
 
 
