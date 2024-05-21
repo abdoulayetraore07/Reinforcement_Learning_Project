@@ -24,8 +24,8 @@ double** Q;
 double epsilon = 0.05;
 char police ;
 int done ;
-int nb_training = 100000 ;
-int nb_normalise = 75 ;
+int nb_training = 500 ;
+int nb_normalise = 150 ;
 
 
 
