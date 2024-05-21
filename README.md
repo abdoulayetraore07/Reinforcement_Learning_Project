@@ -1,25 +1,25 @@
 # Reinforcement Learning Project: Maze 
 
-Welcome on our git :)
+Welcome to our git :)
 
 Here's our repository dedicated to Reinforcement Learning. A small project will be conducted and used as a course project at ENSTA Paris.
 
-We aim here to implement different Reinforcement Learning algorithms to exit a maze first and do our project that consists of creating an IA able to play morpion game.
+We aim here to implement different Reinforcement Learning algorithms to exit a maze first and do our project which consists of creating an IA able to play a morpion game.
 
 You'll find here several folders :
 
 /Include is for the headers
 
-/src is for the algorithms and the environments by themselves.
+/src is for the algorithms and the environments by themselves, it contains the different parts and functions provided by the teacher and our functions. 
 
-/Data is for the maze in format txt and different files txt pour initialize Q at each execution
+/Data is for the maze in format txt and different files txt for loading Q at each execution for the morpion game. 
+There is also a file pptx for the presentation.
 
 /Our algorithms for the final evaluation are named : Q_learning.c ; Sarsa.c ; Morpion_Q.c ; Morpion_2Q.c
 
 Q-learning is a reinforcement learning algorithm that aims to learn the value of actions in specific states using a Q-value table, without needing a model of the environment. It updates Q-values by maximizing the expected future rewards.
 
 SARSA (State-Action-Reward-State-Action) is a similar algorithm that updates Q-values based on the policy being followed. Unlike Q-learning, which uses the best possible action, SARSA uses the action actually taken according to the current policy.
-It contains the different parts and functions provided by the teacher and our functions. 
 
 It's possible to choose for the moment between two functions for the policy: epsilon_greedy and  Boltzmann's exploration.
 We notice that the first policy takes less time for execution than the second.
