@@ -1,24 +1,24 @@
-# 🤖 Reinforcement Learning Project: Maze & Morpion
+# 🤖 Reinforcement Learning Project: Maze & Tic-Tac-Toe
 
 ## 📌 Description
-Ce dépôt contient un projet d'apprentissage par renforcement réalisé dans le cadre d'un cours à l'ENSTA Paris. Nous avons implémenté plusieurs algorithmes d'apprentissage par renforcement pour résoudre deux problèmes distincts :
-1. Trouver la sortie d'un labyrinthe
-2. Créer une IA capable de jouer au morpion (tic-tac-toe)
+This repository contains a reinforcement learning project carried out as part of a course at ENSTA Paris. We implemented several reinforcement learning algorithms to solve two distinct problems:
+1. Finding the exit of a maze
+2. Creating an AI capable of playing tic-tac-toe
 
-Ce projet démontre l'application de techniques d'apprentissage par renforcement comme Q-learning et SARSA à des problèmes concrets, en utilisant différentes stratégies d'exploration.
-
----
-
-## 🛠️ Fonctionnalités
-✅ **Algorithmes d'apprentissage par renforcement** - Q-learning et SARSA  
-✅ **Stratégies d'exploration** - Epsilon-greedy et Exploration de Boltzmann  
-✅ **Résolution de labyrinthe** - Trouver le chemin optimal dans un environnement complexe  
-✅ **IA pour jeu de morpion** - Simple Q-learning et Double Q-learning  
-✅ **Chargement/Sauvegarde de modèles** - Persistance des tables Q pour réutilisation  
+This project demonstrates the application of reinforcement learning techniques such as Q-learning and SARSA to concrete problems, using different exploration strategies.
 
 ---
 
-## 📂 Structure du Projet
+## 🛠️ Features
+✅ **Reinforcement learning algorithms** - Q-learning and SARSA  
+✅ **Exploration strategies** - Epsilon-greedy and Boltzmann exploration  
+✅ **Maze solving** - Find the optimal path in a complex environment  
+✅ **Tic-tac-toe AI** - Simple Q-learning and Double Q-learning  
+✅ **Model loading/saving** - Q-table persistence for reuse  
+
+---
+
+## 📂 Project Structure
 
 ```
 /Reinforcement_Learning_Project
@@ -41,35 +41,37 @@ Ce projet démontre l'application de techniques d'apprentissage par renforcement
 │── ...                        # Fichiers pour chargement/sauvegarde des tables Q
 ```
 
-## 🧠 Algorithmes Implémentés
+
+## 🧠 Implemented Algorithms
 
 ### Q-learning
-Q-learning est un algorithme d'apprentissage par renforcement qui apprend la valeur des actions dans des états spécifiques en utilisant une table de valeurs Q, sans nécessiter un modèle de l'environnement. Il met à jour les valeurs Q en maximisant les récompenses futures attendues.
+Q-learning is a reinforcement learning algorithm that learns the value of actions in specific states using a Q-value table, without needing a model of the environment. It updates Q-values by maximizing expected future rewards.
 
 ### SARSA
-SARSA (State-Action-Reward-State-Action) est un algorithme similaire qui met à jour les valeurs Q en se basant sur la politique suivie. Contrairement au Q-learning qui utilise la meilleure action possible, SARSA utilise l'action effectivement choisie selon la politique actuelle.
+SARSA (State-Action-Reward-State-Action) is a similar algorithm that updates Q-values based on the policy being followed. Unlike Q-learning which uses the best possible action, SARSA uses the action actually chosen according to the current policy.
 
-### Stratégies d'exploration
-Deux fonctions sont disponibles pour la politique d'exploration :
-- **Epsilon-greedy** : Rapide et efficace
-- **Exploration de Boltzmann** : Plus sophistiquée mais plus lente en exécution
+### Exploration Strategies
+Two functions are available for the exploration policy:
+- **Epsilon-greedy**: Fast and efficient
+- **Boltzmann exploration**: More sophisticated but slower in execution
 
-### Morpion (Tic-tac-toe)
-Deux approches sont implémentées pour le jeu de morpion :
-- **Q-learning** avec exploration epsilon-greedy
-- **Double Q-learning** pour expérimentation
+### Tic-tac-toe
+Two approaches are implemented for the tic-tac-toe game:
+- **Q-learning** with epsilon-greedy exploration
+- **Double Q-learning** for experimentation
 
-Nos tests ont montré que le Q-learning avec epsilon-greedy est plus efficace pour ce projet spécifique.
+Our tests showed that Q-learning with epsilon-greedy is more effective for this specific project.
 
-## 🚀 Exécution du Projet
-Pour exécuter le projet, il suffit de taper `make` dans votre terminal. Vous obtiendrez les exécutables suivants :
-- `Q_learning` : Q-learning pour le labyrinthe
-- `Sarsa` : SARSA pour le labyrinthe
-- `Morpion_Q` : Q-learning pour le morpion
-- `Morpion_2Q` : Double Q-learning pour le morpion
+## 🚀 Running the Project
+To run the project, simply type `make` in your terminal. You will obtain the following executables:
+- `Q_learning`: Q-learning for the maze
+- `Sarsa`: SARSA for the maze
+- `Morpion_Q`: Q-learning for tic-tac-toe
+- `Morpion_2Q`: Double Q-learning for tic-tac-toe
 
-Des descriptions détaillées peuvent être trouvées dans les commentaires des algorithmes.
+Detailed descriptions can be found in the comments of the algorithms.
 
 ---
 
-Merci pour votre lecture et bon apprentissage par renforcement !
+Thanks for reading and enjoy your reinforcement learning journey!
+
