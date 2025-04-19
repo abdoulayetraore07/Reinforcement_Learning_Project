@@ -1,35 +1,75 @@
-# Reinforcement Learning Project: Maze 
+# 🤖 Reinforcement Learning Project: Maze & Morpion
 
-Welcome to our git :)
+## 📌 Description
+Ce dépôt contient un projet d'apprentissage par renforcement réalisé dans le cadre d'un cours à l'ENSTA Paris. Nous avons implémenté plusieurs algorithmes d'apprentissage par renforcement pour résoudre deux problèmes distincts :
+1. Trouver la sortie d'un labyrinthe
+2. Créer une IA capable de jouer au morpion (tic-tac-toe)
 
-Here's our repository dedicated to Reinforcement Learning. A small project will be conducted and used as a course project at ENSTA Paris.
+Ce projet démontre l'application de techniques d'apprentissage par renforcement comme Q-learning et SARSA à des problèmes concrets, en utilisant différentes stratégies d'exploration.
 
-We aim here to implement different Reinforcement Learning algorithms to exit a maze first and do our project which consists of creating an IA able to play a morpion game.
+---
 
-You'll find here several folders :
+## 🛠️ Fonctionnalités
+✅ **Algorithmes d'apprentissage par renforcement** - Q-learning et SARSA  
+✅ **Stratégies d'exploration** - Epsilon-greedy et Exploration de Boltzmann  
+✅ **Résolution de labyrinthe** - Trouver le chemin optimal dans un environnement complexe  
+✅ **IA pour jeu de morpion** - Simple Q-learning et Double Q-learning  
+✅ **Chargement/Sauvegarde de modèles** - Persistance des tables Q pour réutilisation  
 
-/Include is for the headers
+---
 
-/src is for the algorithms and the environments by themselves, it contains the different parts and functions provided by the teacher and our functions. 
+## 📂 Structure du Projet
 
-/Data is for the maze in format txt and different files txt for loading Q at each execution for the morpion game. 
-There is also a file pptx for the presentation.
+```
+/Reinforcement_Learning_Project
+│── README.md                      # Ce fichier
+│── presentation.pptx              # Présentation du projet
+│── Makefile                       # Fichier de compilation
+│
+├── Include/                       # Fichiers d'en-tête
+│   │── ...                        # Headers pour les algorithmes et environnements
+│
+├── src/                           # Code source
+│   │── Q_learning.c               # Implémentation de Q-learning
+│   │── Sarsa.c                    # Implémentation de SARSA
+│   │── Morpion_Q.c                # Q-learning pour le jeu de morpion
+│   │── Morpion_2Q.c               # Double Q-learning pour le jeu de morpion
+│   │── ...                        # Autres fichiers source et environnements
+│
+└── Data/                          # Données pour les environnements
+│── maze.txt                   # Labyrinthe au format texte
+│── ...                        # Fichiers pour chargement/sauvegarde des tables Q
+```
 
-/Our algorithms for the final evaluation are named : Q_learning.c ; Sarsa.c ; Morpion_Q.c ; Morpion_2Q.c
+## 🧠 Algorithmes Implémentés
 
-Q-learning is a reinforcement learning algorithm that aims to learn the value of actions in specific states using a Q-value table, without needing a model of the environment. It updates Q-values by maximizing the expected future rewards.
+### Q-learning
+Q-learning est un algorithme d'apprentissage par renforcement qui apprend la valeur des actions dans des états spécifiques en utilisant une table de valeurs Q, sans nécessiter un modèle de l'environnement. Il met à jour les valeurs Q en maximisant les récompenses futures attendues.
 
-SARSA (State-Action-Reward-State-Action) is a similar algorithm that updates Q-values based on the policy being followed. Unlike Q-learning, which uses the best possible action, SARSA uses the action actually taken according to the current policy.
+### SARSA
+SARSA (State-Action-Reward-State-Action) est un algorithme similaire qui met à jour les valeurs Q en se basant sur la politique suivie. Contrairement au Q-learning qui utilise la meilleure action possible, SARSA utilise l'action effectivement choisie selon la politique actuelle.
 
-It's possible to choose for the moment between two functions for the policy: epsilon_greedy and  Boltzmann's exploration.
-We notice that the first policy takes less time for execution than the second.
+### Stratégies d'exploration
+Deux fonctions sont disponibles pour la politique d'exploration :
+- **Epsilon-greedy** : Rapide et efficace
+- **Exploration de Boltzmann** : Plus sophistiquée mais plus lente en exécution
 
-For the morpion game, you have implemented two algorithms: the first uses double Q_learning and the last one uses Q_learning with epsilon_greedy 
-We have done these two algorithms to experiment with double Q_learning first and observe the difference and the efficacity.
-We finally chose Q_learning with epsilon_greedy because we think it's more efficient for our project.
+### Morpion (Tic-tac-toe)
+Deux approches sont implémentées pour le jeu de morpion :
+- **Q-learning** avec exploration epsilon-greedy
+- **Double Q-learning** pour expérimentation
 
-To run the project, you have just to type 'make' in your terminal and you'll get the executables named: Morpion_Q, Morpion_2Q, Q_learning, Sarsa
+Nos tests ont montré que le Q-learning avec epsilon-greedy est plus efficace pour ce projet spécifique.
 
-Detailed descriptions can be found in the algorithm.
+## 🚀 Exécution du Projet
+Pour exécuter le projet, il suffit de taper `make` dans votre terminal. Vous obtiendrez les exécutables suivants :
+- `Q_learning` : Q-learning pour le labyrinthe
+- `Sarsa` : SARSA pour le labyrinthe
+- `Morpion_Q` : Q-learning pour le morpion
+- `Morpion_2Q` : Double Q-learning pour le morpion
 
-Thank you for your reading!
+Des descriptions détaillées peuvent être trouvées dans les commentaires des algorithmes.
+
+---
+
+Merci pour votre lecture et bon apprentissage par renforcement !
