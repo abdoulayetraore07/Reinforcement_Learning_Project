@@ -10,11 +10,11 @@ This project demonstrates the application of reinforcement learning techniques s
 ---
 
 ## Features
-✅ **Reinforcement learning algorithms** - Q-learning and SARSA  
-✅ **Exploration strategies** - Epsilon-greedy and Boltzmann exploration  
-✅ **Maze solving** - Find the optimal path in a complex environment  
-✅ **Tic-tac-toe AI** - Simple Q-learning and Double Q-learning  
-✅ **Model loading/saving** - Q-table persistence for reuse  
+ **Reinforcement learning algorithms** - Q-learning and SARSA  
+ **Exploration strategies** - Epsilon-greedy and Boltzmann exploration  
+ **Maze solving** - Find the optimal path in a complex environment  
+ **Tic-tac-toe AI** - Simple Q-learning and Double Q-learning  
+ **Model loading/saving** - Q-table persistence for reuse  
 
 ---
 
