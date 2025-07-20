@@ -1,4 +1,4 @@
-# 🤖 Reinforcement Learning Project: Maze & Tic-Tac-Toe
+# Reinforcement Learning Project: Maze & Tic-Tac-Toe
 
 ## 📌 Description
 This repository contains a reinforcement learning project carried out as part of a course at ENSTA Paris. We implemented several reinforcement learning algorithms to solve two distinct problems:
@@ -9,7 +9,7 @@ This project demonstrates the application of reinforcement learning techniques s
 
 ---
 
-## 🛠️ Features
+## Features
 ✅ **Reinforcement learning algorithms** - Q-learning and SARSA  
 ✅ **Exploration strategies** - Epsilon-greedy and Boltzmann exploration  
 ✅ **Maze solving** - Find the optimal path in a complex environment  
@@ -18,7 +18,7 @@ This project demonstrates the application of reinforcement learning techniques s
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 /Reinforcement_Learning_Project
@@ -42,7 +42,7 @@ This project demonstrates the application of reinforcement learning techniques s
 ```
 
 
-## 🧠 Implemented Algorithms
+## Implemented Algorithms
 
 ### Q-learning
 Q-learning is a reinforcement learning algorithm that learns the value of actions in specific states using a Q-value table, without needing a model of the environment. It updates Q-values by maximizing expected future rewards.
@@ -62,7 +62,7 @@ Two approaches are implemented for the tic-tac-toe game:
 
 Our tests showed that Q-learning with epsilon-greedy is more effective for this specific project.
 
-## 🚀 Running the Project
+## Running the Project
 To run the project, simply type `make` in your terminal. You will obtain the following executables:
 - `Q_learning`: Q-learning for the maze
 - `Sarsa`: SARSA for the maze
